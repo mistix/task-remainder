@@ -31,7 +31,9 @@ namespace TaskRemainder
 
         private void initDataBase()
         {
-            //TODO inicjalizacja bazy danych
+            // Initialization DB 
+            // creating tables
+            CDBOperation.initDateBase();
         }
 
         /// <summary>

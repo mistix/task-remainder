@@ -13,6 +13,7 @@ namespace TaskRemainder.GUI
     public partial class AddTask : Form
     {
         #region Variables
+        CDBOperation.DBOperation resultDB;
         #endregion
 
         #region Construstor
@@ -67,7 +68,24 @@ namespace TaskRemainder.GUI
                 ArrayList context_list = getTaskOrContextFromMessage(message, TagOrContext.Context);
                 ArrayList tag_list = getTaskOrContextFromMessage(message, TagOrContext.Tag);
 
-                //TODO dodawanie kontekstu i taga do DB oraz treści zadania
+                // checking result operation of DB
+                resultDB = CDBOperation.insertContextDB(context_list);
+                if (resultDB != CDBOperation.DBOperation.InsertSuccessful)
+                {
+                    MessageBox.Show("Error when inserting new context", "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // insrting new tag
+                resultDB = CDBOperation.insertTagDB(tag_list);
+                if (resultDB != CDBOperation.DBOperation.InsertSuccessful)
+                {
+                    MessageBox.Show("Error when inserting new tag", "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
             }
             else if (checkBoxEnd.Checked && !checkBoxStartDate.Checked) // end checked and start unchecked
             {

@@ -11,7 +11,8 @@ namespace TaskRemainder
     // - insertowanie danych
     // - updejtowanie danych
     // - kasowanie danych
-    public static class DBOperation
+
+    public static class CDBOperation
     {
         #region Variables
         static SQLiteConnection connection;
@@ -23,7 +24,7 @@ namespace TaskRemainder
         /// <summary>
         /// Describe operation on DB
         /// </summary>
-        public enum DBOperation 
+        public enum DBOperation
         {
             InsertSuccessful,
             UpdateSuccessful,
@@ -33,8 +34,13 @@ namespace TaskRemainder
             UpdateError,
             SelectError,
             InitDBError
-        }
+        };
 
+        #region Initialization DB
+        /// <summary>
+        /// Initialization DB, creating tables
+        /// </summary>
+        /// <returns></returns>
         public static DBOperation initDateBase()
         {
             try
@@ -52,13 +58,17 @@ namespace TaskRemainder
                             // Creating Context table
                             command.CommandText = @"CREATE TABLE [Context] (" +
                                 "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                                "[contextName] VARCHAR(255)  NOT NULL)";
+                                "[contextName] VARCHAR(255)  NOT NULL, " +
+                                "[Task_idTask] INTEGER NOT NULL, " +
+                                "FOREIGN KEY(Task_idTask) REFERENCES Task(idTask))";
                             command.ExecuteNonQuery();
 
                             //creating Tag table
                             command.CommandText = @"CREATE TABLE [Tag] (" +
                                 "[idTag] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                                "[tagName] VARCHAR(255)  NOT NULL)";
+                                "[tagName] VARCHAR(255)  NOT NULL, " +
+                                "[Task_idTask] INTEGER NOT NULL,  " +
+                                "FOREIGN KEY(Task_idTask) REFERENCES Task(idTask))";
                             command.ExecuteNonQuery();
 
                             //Creating Folders table
@@ -76,11 +86,7 @@ namespace TaskRemainder
                                 "[taskStart] DATE  NULL," +
                                 "[finished] BOOLEAN  NOT NULL, " +
                                 "[Folder_idFolder] INTEGER NOT NULL, " +
-                                "[Context_idContext] INTEGER NOT NULL, " +
-                                "[Tag_idTag] INTEGER NOT NULL, " +
-                                "FOREIGN KEY(Folder_idFolder) REFERENCES Folder(idFolder), " +
-                                "FOREIGN KEY(Context_idContext) REFERENCES Context(idContext), " +
-                                "FOREIGN KEY(Tag_idTag) REFERENCES Tag(idTag))";
+                                "FOREIGN KEY(Folder_idFolder) REFERENCES Folder(idFolder))";
                             command.ExecuteNonQuery();
                         }
                     }
@@ -100,8 +106,15 @@ namespace TaskRemainder
 
             return DBOperation.InitDBSuccessful;
         }
+        #endregion
 
-        public static DBOperation addContext(ArrayList context)
+        #region Insertin tag, context into DB
+        /// <summary>
+        /// Adding context to DB
+        /// </summary>
+        /// <param name="context">ArrayList of context gathering from task</param>
+        /// <returns>InsertError or InsertSuccessful</returns>
+        public static DBOperation insertContextDB(ArrayList context)
         {
             try
             {
@@ -111,9 +124,11 @@ namespace TaskRemainder
                     {
                         foreach (string item in context) // adding all new context into DB
                         {
-                            command.CommandText = "insert into context(contextName) values(:name)";
+                            command.CommandText = "insert into Context(contextName) values(:name)";
                             command.Parameters.Clear();
                             command.Parameters.Add("name", System.Data.DbType.String).Value = item;
+
+                            command.ExecuteNonQuery();
                         }
                     }
                 }
@@ -128,5 +143,43 @@ namespace TaskRemainder
 
             return DBOperation.InsertSuccessful;
         }
+
+        /// <summary>
+        /// Insert Tag to the Tag table 
+        /// </summary>
+        /// <param name="tag">ArryList of tags who will be inserted into DB</param>
+        /// <returns>InsertError or InsertSuccessful</returns>
+        public static DBOperation insertTagDB(ArrayList tag)
+        {
+            try
+            {
+                using (transaction = connection.BeginTransaction())
+                {
+                    using (command = connection.CreateCommand())
+                    {
+                        foreach (string item in tag) // adding all new context into DB
+                        {
+                            command.CommandText = "insert into Tag(tagName) values(:name)";
+                            command.Parameters.Clear();
+                            command.Parameters.Add("name", System.Data.DbType.String).Value = item;
+
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return DBOperation.InsertError;
+            }
+
+            transaction.Commit();
+            return DBOperation.InsertSuccessful;
+        }
+        #endregion
+
+
     }
 }
