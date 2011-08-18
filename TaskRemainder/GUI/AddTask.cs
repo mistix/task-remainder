@@ -14,6 +14,8 @@ namespace TaskRemainder.GUI
     {
         #region Variables
         CDBOperation.DBOperation resultDB;
+        DataTable tmp_table;
+        Tools tools;
         #endregion
 
         #region Construstor
@@ -22,17 +24,10 @@ namespace TaskRemainder.GUI
             InitializeComponent();
             checkBoxStartDate.Checked = true;
             checkBoxEnd.Checked = true;
+            tools = new Tools();
         }
         #endregion
 
-        /// <summary>
-        /// Types of search variable
-        /// </summary>
-        public enum TagOrContext
-        {
-            Tag,
-            Context
-        }
 
         private void buttonBack_Click(object sender, EventArgs e)
         {
@@ -65,17 +60,27 @@ namespace TaskRemainder.GUI
                 string message = messageBox.Text;
 
                 // searching for tag and context
-                ArrayList context_list = getTaskOrContextFromMessage(message, TagOrContext.Context);
-                ArrayList tag_list = getTaskOrContextFromMessage(message, TagOrContext.Tag);
+                ArrayList context_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Context);
+                ArrayList tag_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Tag);
+
+                // removing repeated elements from arraylist
+                resultDB = CDBOperation.getTagTable(ref tmp_table);
+                if (resultDB != CDBOperation.DBOperation.SelectSuccessful)
+                {
+                    MessageBox.Show("Error select information from DB", "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                tools.removeRepeatedElement(ref tag_list, tmp_table); 
 
                 // checking result operation of DB
-                resultDB = CDBOperation.insertContextDB(context_list);
+                /*resultDB = CDBOperation.insertContextDB(context_list);
                 if (resultDB != CDBOperation.DBOperation.InsertSuccessful)
                 {
                     MessageBox.Show("Error when inserting new context", "Information",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                }
+                } */
 
                 // insrting new tag
                 resultDB = CDBOperation.insertTagDB(tag_list);
@@ -137,48 +142,6 @@ namespace TaskRemainder.GUI
                 this.dateTimePickerEnd.Enabled = false;
                 this.labelEnd.Enabled = false;
             }
-        }
-        #endregion
-
-        #region Searching for context and tag in string
-        /// <summary>
-        /// Searching and returning arraylist of context or tags
-        /// </summary>
-        /// <param name="message">Task message</param>
-        /// <param name="type">What we should search Tag or Context</param>
-        /// <returns>array of context from task message</returns>
-        private ArrayList getTaskOrContextFromMessage(string message, TagOrContext type)
-        {
-            // checking of tag or context
-            string tag;
-            switch (type)
-            {
-                case TagOrContext.Context:
-                    tag = "@";
-                    break;
-                case TagOrContext.Tag:
-                    tag = ":";
-                    break;
-                default:
-                    tag = "";
-                    break;
-            }
-
-            ArrayList list = new ArrayList();
-            string[] split = message.Split(new char[] {' '});
-            
-            //Searching for tag or context
-            foreach (string item in split)
-            {
-                if (item.Contains(tag))
-                {
-                    string tmp = item.Substring(1);
-                    if(!item.Contains(tmp)) // don't contain that item
-                        list.Add(tmp);
-                }
-            }
-
-            return list;
         }
         #endregion
     }

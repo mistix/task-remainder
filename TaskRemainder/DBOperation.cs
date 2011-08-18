@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data.SQLite;
 using System.Collections;
+using System.Data;
 
 namespace TaskRemainder
 {
@@ -15,9 +16,9 @@ namespace TaskRemainder
     public static class CDBOperation
     {
         #region Variables
-        static SQLiteConnection connection;
-        static SQLiteCommand command;
-        static SQLiteTransaction transaction;
+        static SQLiteConnection connection = null;
+        static SQLiteCommand command = null;
+        static SQLiteTransaction transaction = null;
         static string dataBase = "task-remainder.sql";
         #endregion
 
@@ -35,6 +36,33 @@ namespace TaskRemainder
             SelectError,
             InitDBError
         };
+
+        #region Open and close transaction
+        private static void OpenTransaction()
+        {
+            if (connection == null)
+            {
+                connection = new SQLiteConnection("Data Source=" + dataBase);
+                connection.Open();
+            }
+
+            if (transaction == null)
+            {
+                transaction = connection.BeginTransaction();
+                command = connection.CreateCommand();
+            }
+        }
+
+        private static void CloseTransaction()
+        {
+            if (transaction != null)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                transaction = null;
+            }
+        }
+        #endregion
 
         #region Initialization DB
         /// <summary>
@@ -58,7 +86,7 @@ namespace TaskRemainder
                             // Creating Context table
                             command.CommandText = @"CREATE TABLE [Context] (" +
                                 "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                                "[contextName] VARCHAR(255)  NOT NULL, " +
+                                "[contextName] VARCHAR(255)  UNIQUE NOT NULL, " +
                                 "[Task_idTask] INTEGER NOT NULL, " +
                                 "FOREIGN KEY(Task_idTask) REFERENCES Task(idTask))";
                             command.ExecuteNonQuery();
@@ -153,21 +181,15 @@ namespace TaskRemainder
         {
             try
             {
-                using (transaction = connection.BeginTransaction())
+                OpenTransaction();
+                foreach (string item in tag) // adding all new context into DB
                 {
-                    using (command = connection.CreateCommand())
-                    {
-                        foreach (string item in tag) // adding all new context into DB
-                        {
-                            command.CommandText = "insert into Tag(tagName) values(:name)";
-                            command.Parameters.Clear();
-                            command.Parameters.Add("name", System.Data.DbType.String).Value = item;
+                    command.CommandText = "insert into Tag(tagName) values(:name)";
+                    command.Parameters.Clear();
+                    command.Parameters.Add("name", System.Data.DbType.String).Value = item;
 
-                            command.ExecuteNonQuery();
-                        }
-                    }
+                    command.ExecuteNonQuery();
                 }
-
             }
             catch (Exception)
             {
@@ -176,7 +198,35 @@ namespace TaskRemainder
             }
 
             transaction.Commit();
+            CloseTransaction();
+
             return DBOperation.InsertSuccessful;
+        }
+        #endregion
+
+        #region Returning tables of Tag and Context
+        /// <summary>
+        /// Getting arraylist of tag in DB
+        /// </summary>
+        /// <param name="tag_list"></param>
+        /// <returns></returns>
+        public static DBOperation getTagTable(ref DataTable tag_list)
+        {
+            try
+            {
+                tag_list = new DataTable();
+                OpenTransaction();
+                command.CommandText = "select * from Tag";
+                SQLiteDataReader reader = command.ExecuteReader();
+                tag_list.Load(reader);
+                CloseTransaction();
+            }
+            catch (Exception e)
+            {
+                CloseTransaction();
+                return DBOperation.SelectError;
+            }
+            return DBOperation.SelectSuccessful;
         }
         #endregion
 
