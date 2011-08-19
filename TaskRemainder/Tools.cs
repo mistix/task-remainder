@@ -20,7 +20,7 @@ namespace TaskRemainder
 
         #region Removing repeated elements from DB
         /// <summary>
-        /// Removing duplicated elements from list
+        /// Removing duplicates from list 
         /// </summary>
         /// <param name="tag_list"></param>
         /// <param name="table"></param>

@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBOperation.cs" />
+    <Compile Include="DBRespons.cs" />
     <Compile Include="GUI\AddTask.cs">
       <SubType>Form</SubType>
     </Compile>

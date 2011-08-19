@@ -13,9 +13,13 @@ namespace TaskRemainder.GUI
     public partial class AddTask : Form
     {
         #region Variables
-        CDBOperation.DBOperation resultDB;
         DataTable tmp_table;
         Tools tools;
+        DBRespons dbrespons;
+
+        // date
+        string dateEnd;
+        string dateStart;
         #endregion
 
         #region Construstor
@@ -55,52 +59,26 @@ namespace TaskRemainder.GUI
             // checking task date both date are used
             if (checkBoxEnd.Checked && checkBoxStartDate.Checked) // both checked
             {
-                DateTime startDate = dateTimePickerStart.Value;
-                DateTime endDate = dateTimePickerEnd.Value;
-                string message = messageBox.Text;
-
-                // searching for tag and context
-                ArrayList context_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Context);
-                ArrayList tag_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Tag);
-
-                // removing repeated elements from arraylist
-                resultDB = CDBOperation.getTagTable(ref tmp_table);
-                if (resultDB != CDBOperation.DBOperation.SelectSuccessful)
-                {
-                    MessageBox.Show("Error select information from DB", "Information",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                tools.removeRepeatedElement(ref tag_list, tmp_table); 
-
-                // checking result operation of DB
-                /*resultDB = CDBOperation.insertContextDB(context_list);
-                if (resultDB != CDBOperation.DBOperation.InsertSuccessful)
-                {
-                    MessageBox.Show("Error when inserting new context", "Information",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                } */
-
-                // insrting new tag
-                resultDB = CDBOperation.insertTagDB(tag_list);
-                if (resultDB != CDBOperation.DBOperation.InsertSuccessful)
-                {
-                    MessageBox.Show("Error when inserting new tag", "Information",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
+                dateEnd = ((DateTime)dateTimePickerEnd.Value).ToShortDateString();
+                dateStart = ((DateTime)dateTimePickerStart.Value).ToShortDateString();
             }
             else if (checkBoxEnd.Checked && !checkBoxStartDate.Checked) // end checked and start unchecked
             {
-                //TODO dodać obsługę daty tylko końcowej
+                dateEnd = ((DateTime)dateTimePickerEnd.Value).ToShortDateString();
+                dateStart = null;
             }
             else if (!checkBoxEnd.Checked && !checkBoxStartDate.Checked) // end and start unchecked
             {
-                //TODO przypadek, gdy żadna data nie jest aktywna (taski w przyszłości)
+                dateEnd = null;
+                dateStart = null;
             }
+            
+            // Processing task, searching tags and contexts
+            string message = messageBox.Text;
 
+            // searching for tag and context
+            ArrayList context_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Context);
+            ArrayList tag_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Tag);
         }
 
         #region CheckBoxs checked changed
