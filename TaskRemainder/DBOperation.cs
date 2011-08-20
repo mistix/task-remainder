@@ -121,6 +121,7 @@ namespace TaskRemainder
                                 "[Folder_idFolder] INTEGER NULL, " +
                                 "[Tag_idTag] INTEGER NULL, " +
                                 "[Context_idContext] INTEGER NULL)";
+                            command.ExecuteNonQuery();
                         }
                     }
                 }
@@ -132,10 +133,10 @@ namespace TaskRemainder
             }
             catch (Exception e)
             {
-                transaction.Rollback(); // if error Rollback transaction
+                RollbackTransaction();
                 return new DBRespons(DBStatus.InitDBError, e.Message);
             }
-            transaction.Commit(); // everything is ok
+            CommitTransaction();
             return new DBRespons(DBStatus.InitDBSuccessful);
         }
         #endregion
@@ -146,17 +147,39 @@ namespace TaskRemainder
         /// </summary>
         /// <param name="context">ArrayList of context gathering from task</param>
         /// <returns>InsertError or InsertSuccessful</returns>
-        public static DBRespons insertContextDB(ArrayList context)
+        public static DBRespons insertContextDB(ref ArrayList context)
         {
             try
             {
+                bool makeQuery;
+                DataTable tmp_table = new DataTable();
+
                 OpenTransaction();
-                foreach (string item in context) // adding all new context into DB
+                command.CommandText = "select * from Context";
+                command.Prepare();
+                SQLiteDataReader reader = command.ExecuteReader();
+                tmp_table.Load(reader);
+
+                for (int i = 0; i < context.Count; i++) 
                 {
-                    command.CommandText = "insert into Context(contextName) values(:name)";
-                    command.Parameters.Clear();
-                    command.Parameters.Add("name", System.Data.DbType.String).Value = item;
-                    command.ExecuteNonQuery();
+                    makeQuery = true;
+                    // checking if context dosn't exist in DB
+                    for (int j = 0; j < tmp_table.Rows.Count; j++)
+                    {
+                        if (context[i].ToString().Equals(tmp_table.Rows[j]["contextName"].ToString()))
+                        {
+                            makeQuery = false;
+                            break;
+                        }
+                    }
+
+                    if (makeQuery) // inserting new context to DB if data is unique
+                    {
+                        command.CommandText = "insert into Context(contextName) values(:name)";
+                        command.Parameters.Clear();
+                        command.Parameters.Add("name", System.Data.DbType.String).Value = context[i].ToString();
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
             catch (Exception e)
@@ -173,17 +196,39 @@ namespace TaskRemainder
         /// </summary>
         /// <param name="tag">ArryList of tags who will be inserted into DB</param>
         /// <returns>InsertError or InsertSuccessful</returns>
-        public static DBRespons insertTagDB(ArrayList tag)
+        public static DBRespons insertTagDB(ref ArrayList tag)
         {
             try
             {
+                bool makeQuery;
+                DataTable tmp_table = new DataTable();
+
                 OpenTransaction();
-                foreach (string item in tag) // adding all new context into DB
+                command.CommandText = "select * from Tag";
+                command.Prepare();
+                SQLiteDataReader reader = command.ExecuteReader();
+                tmp_table.Load(reader);
+
+                for(int i=0; i<tag.Count; i++)
                 {
-                    command.CommandText = "insert into Tag(tagName) values(:name)";
-                    command.Parameters.Clear();
-                    command.Parameters.Add("name", System.Data.DbType.String).Value = item;
-                    command.ExecuteNonQuery();
+                    makeQuery = true;
+                    // checking if context dosn't exist in DB
+                    for (int j = 0; j < tmp_table.Rows.Count; j++)
+                    {
+                        if (tag[i].ToString().Equals(tmp_table.Rows[j]["tagName"].ToString()))
+                        {
+                            makeQuery = false;
+                            break;
+                        }
+                    }
+
+                    if (makeQuery) // inserting new context to DB if data is unique
+                    {
+                        command.CommandText = "insert into Tag(tagName) values(:name)";
+                        command.Parameters.Clear();
+                        command.Parameters.Add("name", System.Data.DbType.String).Value = tag[i].ToString();
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
             catch (Exception e)
@@ -191,6 +236,7 @@ namespace TaskRemainder
                 RollbackTransaction();
                 return new DBRespons(DBStatus.InsertError, e.Message);
             }
+            CommitTransaction();
             return new DBRespons(DBStatus.InsertSuccessful);
         }
         #endregion
@@ -242,6 +288,7 @@ namespace TaskRemainder
         #endregion
 
         #region Inserting new task to DB
+
         /// <summary>
         /// Inserting new task
         /// </summary>
@@ -249,21 +296,30 @@ namespace TaskRemainder
         /// <param name="dateEnd">task end date</param>
         /// <param name="dataStart">task start date</param>
         /// <param name="finished">if task is finished</param>
+        /// <param name="idTask">returning ID of new task</param>
         /// <returns>DBRespons</returns>
-        public static DBRespons insertNewTask(string taskMsg, string dateEnd, string dateStart, bool finished)
+        public static DBRespons insertNewTask(string taskMsg, string dateEnd, string dateStart, bool finished, ref decimal idTask)
         {
             try
             {
+                // initialization reference
+                idTask = 0;
+
                 OpenTransaction();
                 command.CommandText = "insert into Tasks(taskDesc, taskStart, taskEnd, finished) values(:taskMsg, " +
                     ":start, :end, :finished)";
                 command.Parameters.Clear();
-                command.Parameters.Add("taskDesc", DbType.String).Value = taskMsg;
+                command.Parameters.Add("taskMsg", DbType.String).Value = taskMsg;
                 command.Parameters.Add("start", DbType.Date).Value = dateStart;
                 command.Parameters.Add("end", DbType.Date).Value = dateEnd;
                 command.Parameters.Add("finished", DbType.Boolean).Value = finished;
                 command.Prepare();
                 command.ExecuteNonQuery();
+
+                command.CommandText = "select max(idTasks) from Tasks";
+                command.Parameters.Clear();
+                command.Prepare();
+                idTask = decimal.Parse(command.ExecuteScalar().ToString());
             }
             catch (Exception e)
             {
@@ -271,7 +327,137 @@ namespace TaskRemainder
                 return new DBRespons(DBStatus.InsertError, e.Message);
             }
             CommitTransaction();
-            return new DBRespons(DBStatus.SelectSuccessful);
+            return new DBRespons(DBStatus.InsertSuccessful);
+        }
+        #endregion
+
+        #region Connecting all data together in Container
+        public static DBRespons insertContainerDB(decimal idTask, ArrayList tag, ArrayList context)
+        {
+            try
+            {
+                int tagCounter = tag.Count;
+                int contextCounter = context.Count;
+                string idTag;
+                string idContext;
+
+                // preparing new DT for contain all data
+                DataTable data = new DataTable();
+                data.Columns.Add("idTask", typeof(string));
+                data.Columns.Add("idTag", typeof(string));
+                data.Columns.Add("idContext", typeof(string));
+                data.Columns.Add("idFolder", typeof(string));
+
+                OpenTransaction();
+                if (tagCounter > contextCounter)
+                {
+                    for (int i = 0; i < tagCounter; i++)
+                    {
+                        DataRow row = data.NewRow();
+                        row[0] = idTask;
+                        row[3] = null;
+
+                        command.CommandText = "select idTag from Tag where tagName= :name";
+                        command.Parameters.Clear();
+                        command.Parameters.Add("name", DbType.String).Value = tag[i];
+                        command.Prepare();
+                        idTag = Convert.ToString(command.ExecuteScalar());
+
+                        if (i >= contextCounter)
+                        {
+                            idContext = null;
+                        }
+                        else
+                        {
+                            command.CommandText = "select idContext from Context where contextName= :name";
+                            command.Parameters.Clear();
+                            command.Parameters.Add("name", DbType.String).Value = context[i];
+                            command.Prepare();
+                            idContext = Convert.ToString(command.ExecuteScalar());
+                        }
+
+                        // preparing data
+                        row[1] = idTag;
+                        row[2] = idContext;
+                        data.Rows.InsertAt(row, 0);
+                    }
+                }
+
+                if (tagCounter < contextCounter)
+                {
+                    for (int i = 0; i < contextCounter; i++)
+                    {
+                        DataRow row = data.NewRow();
+                        row[0] = idTask;
+                        row[3] = null;
+
+                        command.CommandText = "select idContext from Context where contextName= :name";
+                        command.Parameters.Add("name", DbType.String).Value = context[i];
+                        command.Prepare();
+                        idContext = Convert.ToString(command.ExecuteScalar());
+
+                        if (i >= tagCounter)
+                        {
+                            idTag = null;
+                        }
+                        else
+                        {
+                            command.CommandText = "select idTag from Tag where tagName= :name";
+                            command.Parameters.Clear();
+                            command.Parameters.Add("name", DbType.String).Value = tag[i];
+                            command.Prepare();
+                            idTag = Convert.ToString(command.ExecuteScalar());
+                        }
+
+                        // preparing data
+                        row[1] = idTag;
+                        row[2] = idContext;
+                    }
+                }
+
+                if (tagCounter == contextCounter)
+                {
+                    for (int i = 0; i < tagCounter; i++)
+                    {
+                        DataRow row = data.NewRow();
+                        row[0] = idTask;
+                        row[3] = null;
+
+                        command.CommandText = "select idTag from Tag where tagName= :name";
+                        command.Parameters.Add("name", DbType.String).Value = tag[i];
+                        command.Prepare();
+                        idTag = Convert.ToString(command.ExecuteScalar());
+
+                        command.CommandText = "select idContext from Context where contextName= :name";
+                        command.Parameters.Add("name", DbType.String).Value = context[i];
+                        command.Prepare();
+                        idContext = Convert.ToString(command.ExecuteScalar());
+
+                        // preparing data
+                        row[1] = idTag;
+                        row[2] = idContext;
+                    }
+                }
+
+                // inserting whole date
+                foreach (DataRow row in data.Rows)
+                {
+                    command.CommandText = "insert into Container(Tasks_idTasks, Context_idContext, Tag_idTag) " +
+                        " values(:idTask, :idContext, :idTag)";
+                    command.Parameters.Clear();
+                    command.Parameters.Add("idTask", DbType.VarNumeric).Value = row[0];
+                    command.Parameters.Add("idContext", DbType.VarNumeric).Value = row[2];
+                    command.Parameters.Add("idTag", DbType.VarNumeric).Value = row[1];
+                    command.Prepare();
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.InsertError, e.Message);
+            }
+            return new DBRespons(DBStatus.InsertSuccessful);
         }
         #endregion
     }

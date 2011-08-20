@@ -20,6 +20,10 @@ namespace TaskRemainder.GUI
         // date
         string dateEnd;
         string dateStart;
+        decimal idTask;
+        decimal idTag;
+        decimal idContext;
+        decimal idFolder;
         #endregion
 
         #region Construstor
@@ -40,14 +44,6 @@ namespace TaskRemainder.GUI
 
         private void buttonAddTask_Click(object sender, EventArgs e)
         {
-            // checking if any task message is writen
-            if (string.IsNullOrEmpty(messageBox.Text))
-            {
-                MessageBox.Show("Pleas enter any task message!", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
-
             // checking if task message isn't empty
             if (string.IsNullOrEmpty(messageBox.Text))
             {
@@ -56,7 +52,7 @@ namespace TaskRemainder.GUI
                 return;
             }
 
-            // checking task date both date are used
+            // checking task date for date used
             if (checkBoxEnd.Checked && checkBoxStartDate.Checked) // both checked
             {
                 dateEnd = ((DateTime)dateTimePickerEnd.Value).ToShortDateString();
@@ -79,6 +75,51 @@ namespace TaskRemainder.GUI
             // searching for tag and context
             ArrayList context_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Context);
             ArrayList tag_list = tools.getTaskOrContextFromMessage(message, Tools.TagOrContext.Tag);
+
+            /* Inserting new task first */
+            dbrespons = DBOperation.insertNewTask(message, dateEnd, dateStart, false, ref idTask);
+            if (dbrespons.resultOperation() != DBStatus.InsertSuccessful)
+            {
+                MessageBox.Show("Error when inserting new task" + dbrespons.errorMessage(), "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // inserting new context into DB
+            if (context_list.Count != 0)
+            {
+                dbrespons = DBOperation.insertContextDB(ref context_list);
+                if (dbrespons.resultOperation() != DBStatus.InsertSuccessful)
+                {
+                    MessageBox.Show("Error when inserting new context" + dbrespons.errorMessage(), "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // inserting new tag
+            if (tag_list.Count != 0)
+            {
+                dbrespons = DBOperation.insertTagDB(ref tag_list);
+                if (dbrespons.resultOperation() != DBStatus.InsertSuccessful)
+                {
+                    MessageBox.Show("Error when inserting new tag" + dbrespons.errorMessage(), "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // inserting all data together
+            dbrespons = DBOperation.insertContainerDB(idTask, tag_list, context_list);
+            if (dbrespons.resultOperation() != DBStatus.InsertSuccessful)
+            {
+                MessageBox.Show("Error when inserting new task" + dbrespons.errorMessage(), "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // closing window
+            this.Close();
         }
 
         #region CheckBoxs checked changed

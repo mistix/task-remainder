@@ -18,28 +18,6 @@ namespace TaskRemainder
             Context
         }
 
-        #region Removing repeated elements from DB
-        /// <summary>
-        /// Removing duplicates from list 
-        /// </summary>
-        /// <param name="tag_list"></param>
-        /// <param name="table"></param>
-        public void removeRepeatedElement(ref ArrayList tag_list, DataTable table)
-        {
-            // removing all unnesesary duplicates
-            tag_list = removeDuplicates(tag_list);
-
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                for (int j = 0; j<tag_list.Count; j++)
-                {
-                    if (table.Rows[i][1].ToString().Equals(tag_list[j].ToString()))
-                        tag_list.RemoveAt(j); j--;
-                }
-            }
-        }
-        #endregion
-
         #region Removing duplicates from ArrayList
         /// <summary>
         /// Returning ArrayList who contin no duplicates
@@ -97,7 +75,7 @@ namespace TaskRemainder
                 }
             }
 
-            return list;
+            return removeDuplicates(list);
         }
         #endregion
     }

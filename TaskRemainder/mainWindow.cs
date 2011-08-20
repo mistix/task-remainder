@@ -15,6 +15,9 @@ namespace TaskRemainder
     // - listy todo
     public partial class mainWindow : Form
     {
+        #region Variables
+        DBRespons dbrespons;
+        #endregion
         public mainWindow()
         {
             InitializeComponent();
@@ -27,13 +30,14 @@ namespace TaskRemainder
         /// <param name="e"></param>
         private void mainWindow_Load(object sender, EventArgs e)
         {
-        }
-
-        private void initDataBase()
-        {
             // Initialization DB 
-            // creating tables
-            CDBOperation.initDateBase();
+            dbrespons = DBOperation.initDateBase();
+            if (dbrespons.resultOperation() != DBStatus.InitDBSuccessful)
+            {
+                MessageBox.Show("Error durning initialization DB" + dbrespons.errorMessage(), "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
 
         /// <summary>
