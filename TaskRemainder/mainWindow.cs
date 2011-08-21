@@ -10,13 +10,11 @@ using System.Data.SQLite;
 
 namespace TaskRemainder
 {
-    //TODO stworzenie metody do:
-    // - tworzenia drzewa z zadań wg daty zakończenia
-    // - listy todo
     public partial class mainWindow : Form
     {
         #region Variables
         DBRespons dbrespons;
+        DataTable task;
         #endregion
         public mainWindow()
         {
@@ -38,6 +36,8 @@ namespace TaskRemainder
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            updateTaskList();
         }
 
         /// <summary>
@@ -60,7 +60,23 @@ namespace TaskRemainder
             GUI.AddTask addtask = new GUI.AddTask();
             addtask.ShowDialog(this);
             addtask.Dispose();
+            updateTaskList(); 
         }
 
+        /// <summary>
+        /// Method for update task list raised when added,deleted or modify task
+        /// </summary>
+        private void updateTaskList()
+        {
+            // Searching of tasks
+            dbrespons = DBOperation.getTaskList(ref task);
+            if (dbrespons.resultOperation() != DBStatus.SelectSuccessful)
+            {
+                MessageBox.Show("Error durning searching for tasks " + dbrespons.errorMessage(), "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            todoGridView.DataSource = task;
+        }
     }
 }

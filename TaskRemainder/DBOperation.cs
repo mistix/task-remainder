@@ -8,10 +8,7 @@ using System.Data;
 
 namespace TaskRemainder
 {
-    //TODO Dodać obsługę wszystkich operacji na bazie danych
-    // - insertowanie danych
-    // - updejtowanie danych
-    // - kasowanie danych
+    //TODO make update operation for finish tasks
 
     public class DBOperation
     {
@@ -289,6 +286,7 @@ namespace TaskRemainder
 
         #region Inserting new task to DB
 
+
         /// <summary>
         /// Inserting new task
         /// </summary>
@@ -331,7 +329,37 @@ namespace TaskRemainder
         }
         #endregion
 
+        #region Update Container set folder
+        public static DBRespons updateContainerDB(decimal idTask, decimal idFolder)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "update Container set Folder_idFolder = :idFolder where Tasks_idTasks = :idTask";
+                command.Parameters.Clear();
+                command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idFolder;
+                command.Parameters.Add("idTask", DbType.VarNumeric).Value = idTask;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, e.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+        #endregion
+
         #region Connecting all data together in Container
+        /// <summary>
+        /// Inserting data to Container table
+        /// </summary>
+        /// <param name="idTask">Task ID</param>
+        /// <param name="tag">Array contains tags found in task message</param>
+        /// <param name="context">Array of context found in task message</param>
+        /// <returns>InsertError or InsertSuccessful</returns>
         public static DBRespons insertContainerDB(decimal idTask, ArrayList tag, ArrayList context)
         {
             try
@@ -458,6 +486,34 @@ namespace TaskRemainder
                 return new DBRespons(DBStatus.InsertError, e.Message);
             }
             return new DBRespons(DBStatus.InsertSuccessful);
+        }
+        #endregion
+
+        #region Getting task list
+        /// <summary>
+        /// Getting table contains all tasks
+        /// </summary>
+        /// <param name="task">DataTable for holding data</param>
+        /// <returns></returns>
+        public static DBRespons getTaskList(ref DataTable task)
+        {
+            try
+            {
+                task = new DataTable();
+
+                OpenTransaction();
+                command.CommandText = "select * from Tasks order by taskEnd";
+                command.Prepare();
+                SQLiteDataReader reader = command.ExecuteReader();
+                task.Load(reader);
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.SelectError, e.Message);
+            }
+
+            return new DBRespons(DBStatus.SelectSuccessful);
         }
         #endregion
     }

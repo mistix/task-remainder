@@ -13,7 +13,6 @@ namespace TaskRemainder.GUI
     public partial class AddTask : Form
     {
         #region Variables
-        DataTable tmp_table;
         Tools tools;
         DBRespons dbrespons;
 
@@ -21,9 +20,6 @@ namespace TaskRemainder.GUI
         string dateEnd;
         string dateStart;
         decimal idTask;
-        decimal idTag;
-        decimal idContext;
-        decimal idFolder;
         #endregion
 
         #region Construstor
@@ -37,6 +33,7 @@ namespace TaskRemainder.GUI
         #endregion
 
 
+        #region Back and Add button methods
         private void buttonBack_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -121,6 +118,7 @@ namespace TaskRemainder.GUI
             // closing window
             this.Close();
         }
+        #endregion
 
         #region CheckBoxs checked changed
         /// <summary>
