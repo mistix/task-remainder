@@ -78,5 +78,35 @@ namespace TaskRemainder
             }
             todoGridView.DataSource = task;
         }
+
+        private void todoGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // if user click on first column 
+            if (e.ColumnIndex == 4)
+            {
+                int i = e.RowIndex;
+                DataGridViewCell cell = todoGridView["taskDesc", i];
+                bool finish = (bool)todoGridView["finished", i].Value;
+
+                // new style for taskDesc strikeout when finish is selected
+                DataGridViewCellStyle strikedOut = new DataGridViewCellStyle(taskDesc.DefaultCellStyle);
+
+                //FIXME repair strikeout task description fast clicking == crash
+                if (!finish)
+                {
+                    // creating new style for cell
+                    strikedOut.Font = new Font(strikedOut.Font, FontStyle.Strikeout);
+                    cell.Style = strikedOut;
+                    todoGridView["finished", i].Value = "True";
+                }
+
+                if(finish)
+                {
+                    strikedOut.Font = new Font(strikedOut.Font, FontStyle.Regular);
+                    cell.Style = strikedOut;
+                    todoGridView["finished", i].Value = "False";
+                }
+            }
+        }
     }
 }

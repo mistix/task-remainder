@@ -50,14 +50,16 @@
             this.messageStrip = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.taskList = new System.Windows.Forms.TabPage();
-            this.rootNode = new System.Windows.Forms.TreeView();
             this.todoList = new System.Windows.Forms.TabPage();
             this.todoGridView = new System.Windows.Forms.DataGridView();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.treeView_taskList = new System.Windows.Forms.TreeView();
+            this.toolStrip_taskList = new System.Windows.Forms.ToolStrip();
             this.idTasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Finished = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.taskDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskStart = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -65,6 +67,7 @@
             this.taskList.SuspendLayout();
             this.todoList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).BeginInit();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -225,7 +228,7 @@
             // 
             // taskList
             // 
-            this.taskList.Controls.Add(this.rootNode);
+            this.taskList.Controls.Add(this.tableLayoutPanel2);
             this.taskList.Location = new System.Drawing.Point(4, 22);
             this.taskList.Name = "taskList";
             this.taskList.Padding = new System.Windows.Forms.Padding(3);
@@ -233,14 +236,6 @@
             this.taskList.TabIndex = 1;
             this.taskList.Text = "Task list";
             this.taskList.UseVisualStyleBackColor = true;
-            // 
-            // rootNode
-            // 
-            this.rootNode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rootNode.Location = new System.Drawing.Point(3, 3);
-            this.rootNode.Name = "rootNode";
-            this.rootNode.Size = new System.Drawing.Size(661, 348);
-            this.rootNode.TabIndex = 0;
             // 
             // todoList
             // 
@@ -264,15 +259,50 @@
             this.idTasks,
             this.Finished,
             this.taskDesc,
-            this.taskEnd,
-            this.taskStart});
+            this.taskStart,
+            this.taskEnd});
             this.todoGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.todoGridView.Location = new System.Drawing.Point(3, 3);
             this.todoGridView.MultiSelect = false;
             this.todoGridView.Name = "todoGridView";
+            this.todoGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.todoGridView.RowHeadersVisible = false;
             this.todoGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
             this.todoGridView.Size = new System.Drawing.Size(661, 348);
             this.todoGridView.TabIndex = 0;
+            this.todoGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.todoGridView_CellContentClick);
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.treeView_taskList, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.toolStrip_taskList, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(661, 348);
+            this.tableLayoutPanel2.TabIndex = 0;
+            // 
+            // treeView_taskList
+            // 
+            this.treeView_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView_taskList.Location = new System.Drawing.Point(3, 20);
+            this.treeView_taskList.Name = "treeView_taskList";
+            this.treeView_taskList.Size = new System.Drawing.Size(655, 325);
+            this.treeView_taskList.TabIndex = 0;
+            // 
+            // toolStrip_taskList
+            // 
+            this.toolStrip_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStrip_taskList.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip_taskList.Name = "toolStrip_taskList";
+            this.toolStrip_taskList.Size = new System.Drawing.Size(661, 17);
+            this.toolStrip_taskList.TabIndex = 1;
+            this.toolStrip_taskList.Text = "toolStrip1";
             // 
             // idTasks
             // 
@@ -296,22 +326,24 @@
             this.taskDesc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.taskDesc.DataPropertyName = "taskDesc";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.taskDesc.DefaultCellStyle = dataGridViewCellStyle1;
             this.taskDesc.HeaderText = "Task description";
             this.taskDesc.Name = "taskDesc";
-            // 
-            // taskEnd
-            // 
-            this.taskEnd.DataPropertyName = "taskEnd";
-            this.taskEnd.HeaderText = "Task finish";
-            this.taskEnd.Name = "taskEnd";
             // 
             // taskStart
             // 
             this.taskStart.DataPropertyName = "taskStart";
             this.taskStart.HeaderText = "Task started";
             this.taskStart.Name = "taskStart";
+            // 
+            // taskEnd
+            // 
+            this.taskEnd.DataPropertyName = "taskEnd";
+            this.taskEnd.HeaderText = "Task finish";
+            this.taskEnd.Name = "taskEnd";
+            this.taskEnd.ReadOnly = true;
             // 
             // mainWindow
             // 
@@ -335,6 +367,8 @@
             this.taskList.ResumeLayout(false);
             this.todoList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).EndInit();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -359,15 +393,17 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutApplicationToolStripMenuItem;
-        private System.Windows.Forms.TreeView rootNode;
         private System.Windows.Forms.DataGridView todoGridView;
         private System.Windows.Forms.ToolStripMenuItem showTagToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showContextToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TreeView treeView_taskList;
+        private System.Windows.Forms.ToolStrip toolStrip_taskList;
         private System.Windows.Forms.DataGridViewTextBoxColumn idTasks;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskStart;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
     }
 }
 
