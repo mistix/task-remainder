@@ -84,41 +84,42 @@ namespace TaskRemainder
                         using (command = connection.CreateCommand())
                         {
                             // Creating Context table
-                            command.CommandText = @"CREATE TABLE [Context] (" +
-                                "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                            command.CommandText = "CREATE TABLE IF NOT EXISTS [Context] (" +
+                                "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                                 "[contextName] VARCHAR(255)  UNIQUE NOT NULL)";
                             command.ExecuteNonQuery();
 
                             //creating Tag table
-                            command.CommandText = @"CREATE TABLE [Tag] (" +
-                                "[idTag] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                            command.CommandText = "CREATE TABLE [Tag] (" +
+                                "[idTag] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                                 "[tagName] VARCHAR(255)  NOT NULL)";
                             command.ExecuteNonQuery();
 
                             //Creating Folders table
-                            command.CommandText = @"CREATE TABLE [Folder] (" +
-                                "[idFolder] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                                "[folderName] VARCHAR(255)  UNIQUE NOT NULL," +
-                                "[idSubFolder] INTEGER  NULL)";
+                            command.CommandText = "CREATE TABLE [Folder] (" +
+                                "[idFolder] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                                "[folderName] VARCHAR(255) UNIQUE NOT NULL, " +
+                                "[idParentFolder] INTEGER  NULL)";
                             command.ExecuteNonQuery();
 
                             //Creating Tasks table
-                            command.CommandText = @"CREATE TABLE [Tasks] (" +
-                                "[idTasks] INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                                "[taskDesc] NVARCHAR(500)  NOT NULL," +
-                                "[taskEnd] DATE  NULL," +
-                                "[taskStart] DATE  NULL," +
+                            command.CommandText = "CREATE TABLE [Tasks] (" +
+                                "[idTasks] INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                "[taskDesc] NVARCHAR(500)  NOT NULL, " +
+                                "[taskEnd] DATE  NULL, " +
+                                "[taskStart] DATE  NULL, " +
                                 "[finished] BOOLEAN  NOT NULL)";
                             command.ExecuteNonQuery();
 
                             // Creating Container tabke
-                            command.CommandText = @"CREATE TABLE [Container] (" +
+                            command.CommandText = "CREATE TABLE [Container] (" +
                                 "[idContainer] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                                 "[Tasks_idTasks] INTEGER NULL, " +
                                 "[Folder_idFolder] INTEGER NULL, " +
                                 "[Tag_idTag] INTEGER NULL, " +
                                 "[Context_idContext] INTEGER NULL)";
                             command.ExecuteNonQuery();
+                            transaction.Commit();
                         }
                     }
                 }
@@ -133,7 +134,7 @@ namespace TaskRemainder
                 RollbackTransaction();
                 return new DBRespons(DBStatus.InitDBError, e.Message);
             }
-            CommitTransaction();
+            //CommitTransaction();
             return new DBRespons(DBStatus.InitDBSuccessful);
         }
         #endregion
@@ -154,8 +155,11 @@ namespace TaskRemainder
                 OpenTransaction();
                 command.CommandText = "select * from Context";
                 command.Prepare();
-                SQLiteDataReader reader = command.ExecuteReader();
-                tmp_table.Load(reader);
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    tmp_table.Load(reader);
+                }
 
                 for (int i = 0; i < context.Count; i++) 
                 {
@@ -251,8 +255,11 @@ namespace TaskRemainder
                 tag_list = new DataTable();
                 OpenTransaction();
                 command.CommandText = "select * from Tag";
-                SQLiteDataReader reader = command.ExecuteReader();
-                tag_list.Load(reader);
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    tag_list.Load(reader);
+                }
             }
             catch (Exception e)
             {
@@ -504,8 +511,11 @@ namespace TaskRemainder
                 OpenTransaction();
                 command.CommandText = "select * from Tasks order by taskEnd";
                 command.Prepare();
-                SQLiteDataReader reader = command.ExecuteReader();
-                task.Load(reader);
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    task.Load(reader);
+                }
             }
             catch (Exception e)
             {
@@ -513,6 +523,91 @@ namespace TaskRemainder
                 return new DBRespons(DBStatus.SelectError, e.Message);
             }
 
+            return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
+
+        #region Getting folders
+        public static DBRespons getFolders(SQLiteCommand command, ref DataTable folders)
+        {
+            try
+            {
+                folders = new DataTable();
+
+                OpenTransaction();
+                command.CommandText = "select * from Folders";
+                command.Prepare();
+
+                // release as fast as posible
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    folders.Load(reader);
+                }
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.SelectError, e.Message);
+            }
+            return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
+
+        #region Searching folder parent
+        public static DBRespons getFolderByParent(string parent, ref DataTable folder)
+        {
+            try
+            {
+                folder = new DataTable();
+
+                OpenTransaction();
+                command.CommandText = "select folderName, idFolder from Folder where idParentFolder is :idSub";
+                command.Parameters.Add("idSub", DbType.String).Value = parent;
+                command.Prepare();
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    folder.Load(reader);
+                }
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.SelectError, e.Message);
+            }
+            return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
+
+        #region Searching tasks in parent folder
+        /// <summary>
+        /// Method for searching all tasks constrain with folder/node
+        /// </summary>
+        /// <param name="idFolder">ID folder</param>
+        /// <param name="tasks">Table contains result of searching</param>
+        /// <returns>SelectError or SelectSuccessful</returns>
+        public static DBRespons getTasksFromFolder(string idFolder, ref DataTable tasks)
+        {
+            try
+            {
+                tasks = new DataTable();
+                command.CommandText = "select t.idTasks, t.taskDesc from Tasks t, Container c where " +
+                    "t.idTasks = c.Tasks_idTasks and c.Folder_idFolder = :Folder";
+                command.Parameters.Clear();
+                command.Parameters.Add("Folder", DbType.VarNumeric).Value = idFolder;
+                command.Prepare();
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    tasks.Load(reader);
+                }
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.SelectError, e.Message);
+            }
+            CommitTransaction();
             return new DBRespons(DBStatus.SelectSuccessful);
         }
         #endregion

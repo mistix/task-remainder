@@ -15,10 +15,12 @@ namespace TaskRemainder
         #region Variables
         DBRespons dbrespons;
         DataTable task;
+        CreateTreeView createTreeView;
         #endregion
         public mainWindow()
         {
             InitializeComponent();
+            createTreeView = new CreateTreeView(ref treeView_taskList);
         }
 
         /// <summary>
@@ -36,9 +38,12 @@ namespace TaskRemainder
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
+            
+            // creating new tree folder list
             updateTaskList();
+            createTreeView.initTreeView();
         }
+
 
         /// <summary>
         /// Closing whole application
@@ -79,6 +84,11 @@ namespace TaskRemainder
             todoGridView.DataSource = task;
         }
 
+        /// <summary>
+        /// Checking if cell is clicked and strikeout finished task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void todoGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // if user click on first column 

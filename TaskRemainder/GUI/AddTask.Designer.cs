@@ -95,7 +95,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.33788F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.66212F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 44F));
             this.tableLayoutPanel1.Controls.Add(this.checkBoxEnd, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelStart, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelEnd, 0, 1);
@@ -115,7 +115,7 @@
             // 
             this.checkBoxEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxEnd.AutoSize = true;
-            this.checkBoxEnd.Location = new System.Drawing.Point(373, 38);
+            this.checkBoxEnd.Location = new System.Drawing.Point(370, 38);
             this.checkBoxEnd.Name = "checkBoxEnd";
             this.checkBoxEnd.Size = new System.Drawing.Size(15, 30);
             this.checkBoxEnd.TabIndex = 5;
@@ -127,7 +127,7 @@
             this.labelStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelStart.AutoSize = true;
             this.labelStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelStart.Location = new System.Drawing.Point(5, 8);
+            this.labelStart.Location = new System.Drawing.Point(3, 8);
             this.labelStart.Name = "labelStart";
             this.labelStart.Size = new System.Drawing.Size(94, 18);
             this.labelStart.TabIndex = 0;
@@ -138,7 +138,7 @@
             this.labelEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelEnd.AutoSize = true;
             this.labelEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelEnd.Location = new System.Drawing.Point(12, 44);
+            this.labelEnd.Location = new System.Drawing.Point(10, 44);
             this.labelEnd.Name = "labelEnd";
             this.labelEnd.Size = new System.Drawing.Size(87, 18);
             this.labelEnd.TabIndex = 1;
@@ -147,25 +147,25 @@
             // dateTimePickerStart
             // 
             this.dateTimePickerStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerStart.Location = new System.Drawing.Point(105, 3);
+            this.dateTimePickerStart.Location = new System.Drawing.Point(103, 3);
             this.dateTimePickerStart.Name = "dateTimePickerStart";
-            this.dateTimePickerStart.Size = new System.Drawing.Size(253, 21);
+            this.dateTimePickerStart.Size = new System.Drawing.Size(249, 21);
             this.dateTimePickerStart.TabIndex = 2;
             this.dateTimePickerStart.Value = new System.DateTime(2011, 8, 15, 19, 16, 52, 0);
             // 
             // dateTimePickerEnd
             // 
             this.dateTimePickerEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerEnd.Location = new System.Drawing.Point(105, 38);
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(103, 38);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
-            this.dateTimePickerEnd.Size = new System.Drawing.Size(253, 21);
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(249, 21);
             this.dateTimePickerEnd.TabIndex = 3;
             // 
             // checkBoxStartDate
             // 
             this.checkBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxStartDate.AutoSize = true;
-            this.checkBoxStartDate.Location = new System.Drawing.Point(373, 3);
+            this.checkBoxStartDate.Location = new System.Drawing.Point(370, 3);
             this.checkBoxStartDate.Name = "checkBoxStartDate";
             this.checkBoxStartDate.Size = new System.Drawing.Size(15, 29);
             this.checkBoxStartDate.TabIndex = 4;

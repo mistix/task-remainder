@@ -97,6 +97,16 @@ namespace TaskRemainder
             return status;
         }
 
+        public DBStatus result
+        {
+            get { return status; }
+        }
+
+        public string error
+        {
+            get { return msg; }
+        }
+
         public string errorMessage()
         {
             return msg;
