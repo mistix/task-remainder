@@ -95,7 +95,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.33788F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.66212F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel1.Controls.Add(this.checkBoxEnd, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelStart, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelEnd, 0, 1);
@@ -115,7 +115,7 @@
             // 
             this.checkBoxEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxEnd.AutoSize = true;
-            this.checkBoxEnd.Location = new System.Drawing.Point(370, 38);
+            this.checkBoxEnd.Location = new System.Drawing.Point(369, 38);
             this.checkBoxEnd.Name = "checkBoxEnd";
             this.checkBoxEnd.Size = new System.Drawing.Size(15, 30);
             this.checkBoxEnd.TabIndex = 5;
@@ -149,7 +149,7 @@
             this.dateTimePickerStart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dateTimePickerStart.Location = new System.Drawing.Point(103, 3);
             this.dateTimePickerStart.Name = "dateTimePickerStart";
-            this.dateTimePickerStart.Size = new System.Drawing.Size(249, 21);
+            this.dateTimePickerStart.Size = new System.Drawing.Size(248, 21);
             this.dateTimePickerStart.TabIndex = 2;
             this.dateTimePickerStart.Value = new System.DateTime(2011, 8, 15, 19, 16, 52, 0);
             // 
@@ -158,14 +158,14 @@
             this.dateTimePickerEnd.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dateTimePickerEnd.Location = new System.Drawing.Point(103, 38);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
-            this.dateTimePickerEnd.Size = new System.Drawing.Size(249, 21);
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(248, 21);
             this.dateTimePickerEnd.TabIndex = 3;
             // 
             // checkBoxStartDate
             // 
             this.checkBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxStartDate.AutoSize = true;
-            this.checkBoxStartDate.Location = new System.Drawing.Point(370, 3);
+            this.checkBoxStartDate.Location = new System.Drawing.Point(369, 3);
             this.checkBoxStartDate.Name = "checkBoxStartDate";
             this.checkBoxStartDate.Size = new System.Drawing.Size(15, 29);
             this.checkBoxStartDate.TabIndex = 4;

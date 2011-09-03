@@ -561,7 +561,7 @@ namespace TaskRemainder
                 folder = new DataTable();
 
                 OpenTransaction();
-                command.CommandText = "select folderName, idFolder from Folder where idParentFolder is :idSub";
+                command.CommandText = "select folderName, idFolder, idParentFolder as idP from Folder where idParentFolder = :idSub";
                 command.Parameters.Add("idSub", DbType.String).Value = parent;
                 command.Prepare();
 
@@ -601,6 +601,60 @@ namespace TaskRemainder
                 {
                     tasks.Load(reader);
                 }
+            }
+            catch (Exception e)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.SelectError, e.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
+
+        #region Creating new folder
+        /// <summary>
+        /// Creating new folder
+        /// </summary>
+        /// <param name="folderName">Folder name</param>
+        /// <param name="idParentFolder">ID of parent folder if parent is a root then 0</param>
+        /// <returns>InsertError or InsertSuccessful</returns>
+        public static DBRespons createNewFolder(string folderName, string idParentFolder)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "insert into Tasks values(:folder, :parent)";
+                command.Parameters.Add("folder", DbType.String).Value = folderName;
+                command.Parameters.Add("parent", DbType.VarNumeric).Value = idParentFolder;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.InsertError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.InsertSuccessful);
+        }
+        #endregion
+
+        #region Getting last updated row
+        /// <summary>
+        /// Getting last inserted row id
+        /// </summary>
+        /// <param name="idRow">Returning id of last inserted row</param>
+        /// <returns>SelectSuccessful or SelectError</returns>
+        public static DBRespons getLastInsertedRowID(ref int idRow)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "select last_insert_rowid()";
+                command.Prepare();
+
+                idRow = int.Parse(command.ExecuteScalar().ToString());
             }
             catch (Exception e)
             {

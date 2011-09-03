@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -50,24 +50,31 @@
             this.messageStrip = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.taskList = new System.Windows.Forms.TabPage();
-            this.todoList = new System.Windows.Forms.TabPage();
-            this.todoGridView = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.treeView_taskList = new System.Windows.Forms.TreeView();
             this.toolStrip_taskList = new System.Windows.Forms.ToolStrip();
+            this.todoList = new System.Windows.Forms.TabPage();
+            this.todoGridView = new System.Windows.Forms.DataGridView();
             this.idTasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Finished = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.taskDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskStart = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolSBCreateFolder = new System.Windows.Forms.ToolStripButton();
+            this.toolSBRemove = new System.Windows.Forms.ToolStripButton();
+            this.toolSBPrev = new System.Windows.Forms.ToolStripButton();
+            this.toolSBNext = new System.Windows.Forms.ToolStripButton();
+            this.toolSBUp = new System.Windows.Forms.ToolStripButton();
+            this.toolSBDown = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.statusBar.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.taskList.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.toolStrip_taskList.SuspendLayout();
             this.todoList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).BeginInit();
-            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -237,6 +244,48 @@
             this.taskList.Text = "Task list";
             this.taskList.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.treeView_taskList, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.toolStrip_taskList, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 93F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(661, 348);
+            this.tableLayoutPanel2.TabIndex = 0;
+            // 
+            // treeView_taskList
+            // 
+            this.treeView_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView_taskList.LabelEdit = true;
+            this.treeView_taskList.Location = new System.Drawing.Point(3, 27);
+            this.treeView_taskList.Name = "treeView_taskList";
+            this.treeView_taskList.Size = new System.Drawing.Size(655, 318);
+            this.treeView_taskList.TabIndex = 0;
+            this.treeView_taskList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_taskList_AfterSelect);
+            this.treeView_taskList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_taskList_NodeMouseDoubleClick);
+            // 
+            // toolStrip_taskList
+            // 
+            this.toolStrip_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStrip_taskList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolSBCreateFolder,
+            this.toolSBRemove,
+            this.toolSBPrev,
+            this.toolSBNext,
+            this.toolSBUp,
+            this.toolSBDown});
+            this.toolStrip_taskList.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip_taskList.Name = "toolStrip_taskList";
+            this.toolStrip_taskList.Size = new System.Drawing.Size(661, 24);
+            this.toolStrip_taskList.TabIndex = 1;
+            this.toolStrip_taskList.Text = "toolStrip1";
+            // 
             // todoList
             // 
             this.todoList.Controls.Add(this.todoGridView);
@@ -272,38 +321,6 @@
             this.todoGridView.TabIndex = 0;
             this.todoGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.todoGridView_CellContentClick);
             // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.treeView_taskList, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.toolStrip_taskList, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(661, 348);
-            this.tableLayoutPanel2.TabIndex = 0;
-            // 
-            // treeView_taskList
-            // 
-            this.treeView_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView_taskList.Location = new System.Drawing.Point(3, 20);
-            this.treeView_taskList.Name = "treeView_taskList";
-            this.treeView_taskList.Size = new System.Drawing.Size(655, 325);
-            this.treeView_taskList.TabIndex = 0;
-            // 
-            // toolStrip_taskList
-            // 
-            this.toolStrip_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStrip_taskList.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip_taskList.Name = "toolStrip_taskList";
-            this.toolStrip_taskList.Size = new System.Drawing.Size(661, 17);
-            this.toolStrip_taskList.TabIndex = 1;
-            this.toolStrip_taskList.Text = "toolStrip1";
-            // 
             // idTasks
             // 
             this.idTasks.DataPropertyName = "idTasks";
@@ -325,10 +342,10 @@
             // 
             this.taskDesc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.taskDesc.DataPropertyName = "taskDesc";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.taskDesc.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.taskDesc.DefaultCellStyle = dataGridViewCellStyle3;
             this.taskDesc.HeaderText = "Task description";
             this.taskDesc.Name = "taskDesc";
             // 
@@ -344,6 +361,66 @@
             this.taskEnd.HeaderText = "Task finish";
             this.taskEnd.Name = "taskEnd";
             this.taskEnd.ReadOnly = true;
+            // 
+            // toolSBCreateFolder
+            // 
+            this.toolSBCreateFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBCreateFolder.Image = global::TaskRemainder.Properties.Resources.folder;
+            this.toolSBCreateFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBCreateFolder.Name = "toolSBCreateFolder";
+            this.toolSBCreateFolder.Size = new System.Drawing.Size(23, 21);
+            this.toolSBCreateFolder.Text = "Create new folder";
+            this.toolSBCreateFolder.Click += new System.EventHandler(this.toolSBCreateFolder_Click);
+            // 
+            // toolSBRemove
+            // 
+            this.toolSBRemove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBRemove.Image = global::TaskRemainder.Properties.Resources.remove;
+            this.toolSBRemove.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBRemove.Name = "toolSBRemove";
+            this.toolSBRemove.Size = new System.Drawing.Size(23, 21);
+            this.toolSBRemove.Text = "Remov task or folder";
+            this.toolSBRemove.Click += new System.EventHandler(this.toolSBRemove_Click);
+            // 
+            // toolSBPrev
+            // 
+            this.toolSBPrev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBPrev.Image = global::TaskRemainder.Properties.Resources.previous;
+            this.toolSBPrev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBPrev.Name = "toolSBPrev";
+            this.toolSBPrev.Size = new System.Drawing.Size(23, 21);
+            this.toolSBPrev.Text = "Move up";
+            this.toolSBPrev.Click += new System.EventHandler(this.toolSBPrev_Click);
+            // 
+            // toolSBNext
+            // 
+            this.toolSBNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBNext.Image = global::TaskRemainder.Properties.Resources.next;
+            this.toolSBNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBNext.Name = "toolSBNext";
+            this.toolSBNext.Size = new System.Drawing.Size(23, 21);
+            this.toolSBNext.Text = "Move down to node";
+            this.toolSBNext.Click += new System.EventHandler(this.toolSBNext_Click);
+            // 
+            // toolSBUp
+            // 
+            this.toolSBUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBUp.Image = global::TaskRemainder.Properties.Resources.up;
+            this.toolSBUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBUp.Name = "toolSBUp";
+            this.toolSBUp.Size = new System.Drawing.Size(23, 21);
+            this.toolSBUp.Text = "Put node on node up";
+            this.toolSBUp.Click += new System.EventHandler(this.toolSBUp_Click);
+            // 
+            // toolSBDown
+            // 
+            this.toolSBDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSBDown.Image = global::TaskRemainder.Properties.Resources.down;
+            this.toolSBDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSBDown.Name = "toolSBDown";
+            this.toolSBDown.Size = new System.Drawing.Size(23, 21);
+            this.toolSBDown.Text = "Put node on node down";
+            this.toolSBDown.Click += new System.EventHandler(this.toolSBDown_Click);
             // 
             // mainWindow
             // 
@@ -365,10 +442,12 @@
             this.statusBar.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.taskList.ResumeLayout(false);
-            this.todoList.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.toolStrip_taskList.ResumeLayout(false);
+            this.toolStrip_taskList.PerformLayout();
+            this.todoList.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -404,6 +483,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskStart;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
+        private System.Windows.Forms.ToolStripButton toolSBCreateFolder;
+        private System.Windows.Forms.ToolStripButton toolSBPrev;
+        private System.Windows.Forms.ToolStripButton toolSBNext;
+        private System.Windows.Forms.ToolStripButton toolSBUp;
+        private System.Windows.Forms.ToolStripButton toolSBDown;
+        private System.Windows.Forms.ToolStripButton toolSBRemove;
     }
 }
 

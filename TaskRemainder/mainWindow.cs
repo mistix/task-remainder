@@ -118,5 +118,95 @@ namespace TaskRemainder
                 }
             }
         }
+
+        /// <summary>
+        /// Creating new node in main node
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolSBCreateFolder_Click(object sender, EventArgs e)
+        {
+            TreeNode selected_node = treeView_taskList.SelectedNode;
+            if(selected_node != null)
+            {
+                dbrespons = DBOperation.createNewFolder("New folder", selected_node.Tag.ToString());
+                if (dbrespons.result != DBStatus.InsertSuccessful)
+                {
+                    MessageBox.Show("Error when creating new folder!", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int row = 0;
+                dbrespons = DBOperation.getLastInsertedRowID(ref row);
+                if(dbrespons.result != DBStatus.SelectSuccessful)
+                {
+                    MessageBox.Show("Error when getting last row id", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                createTreeView.createNewFolder("New folder", row.ToString());
+            }
+        }
+
+        private void treeView_taskList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+
+        }
+
+        #region Operations on nodes
+        /// <summary>
+        /// Moving task/folder on level up in nodes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolSBPrev_Click(object sender, EventArgs e)
+        {
+            TreeNode sel_node = treeView_taskList.SelectedNode;
+            createTreeView.nodeUp(sel_node);
+        }
+
+        /// <summary>
+        /// Moving task or folder abow next folder/task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolSBUp_Click(object sender, EventArgs e)
+        {
+            TreeNode sel_node = treeView_taskList.SelectedNode;
+            createTreeView.nodeMoveUp(sel_node);
+        }
+
+        /// <summary>
+        /// Moving on level down
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolSBNext_Click(object sender, EventArgs e)
+        {
+            TreeNode sel_node = treeView_taskList.SelectedNode;
+            createTreeView.nodeDown(sel_node);
+        }
+
+        /// <summary>
+        /// Moving task or folder under task/folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolSBDown_Click(object sender, EventArgs e)
+        {
+            TreeNode sel_node = treeView_taskList.SelectedNode;
+            createTreeView.nodeMoveDown(sel_node);
+        }
+        #endregion
+
+        private void toolSBRemove_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void treeView_taskList_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+        }
+
     }
 }
