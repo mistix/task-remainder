@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComboBox-TreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CreateTreeView.cs" />
     <Compile Include="DBOperation.cs" />
     <Compile Include="DBRespons.cs" />

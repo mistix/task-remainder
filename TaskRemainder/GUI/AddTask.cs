@@ -15,11 +15,13 @@ namespace TaskRemainder.GUI
         #region Variables
         Tools tools;
         DBRespons dbrespons;
+        CreateTreeView c_treeView;
 
         // date
         string dateEnd;
         string dateStart;
         decimal idTask;
+        string folderID;
         #endregion
 
         #region Construstor
@@ -29,6 +31,8 @@ namespace TaskRemainder.GUI
             checkBoxStartDate.Checked = true;
             checkBoxEnd.Checked = true;
             tools = new Tools();
+            TreeView tree = comboBoxFolder.TreeView;
+            c_treeView = new CreateTreeView(ref tree);
         }
         #endregion
 
@@ -106,8 +110,18 @@ namespace TaskRemainder.GUI
                 }
             }
 
+            // getting folder ID
+            if (!checkBoxFolder.Checked)
+            {
+                folderID = comboBoxFolder.FolderID;
+            }
+            else
+            {
+                folderID = "0";
+            }
+
             // inserting all data together
-            dbrespons = DBOperation.insertContainerDB(idTask, tag_list, context_list);
+            dbrespons = DBOperation.insertContainerDB(idTask, tag_list, context_list, folderID);
             if (dbrespons.resultOperation() != DBStatus.InsertSuccessful)
             {
                 MessageBox.Show("Error when inserting new task" + dbrespons.errorMessage(), "Information",
@@ -161,5 +175,26 @@ namespace TaskRemainder.GUI
             }
         }
         #endregion
+
+        #region Load add tasks
+        private void AddTask_Load_1(object sender, EventArgs e)
+        {
+            c_treeView.createNewNode("0", comboBoxFolder.TreeView.Nodes);
+        }
+        #endregion
+
+        private void checkBoxFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxFolder.Checked)
+            {
+                this.labelFolder.Enabled = false;
+                this.comboBoxFolder.Enabled = false;
+            }
+            else
+            {
+                this.labelFolder.Enabled = true;
+                this.comboBoxFolder.Enabled = true;
+            }
+        }
     }
 }

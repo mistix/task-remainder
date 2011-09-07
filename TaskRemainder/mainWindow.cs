@@ -65,7 +65,8 @@ namespace TaskRemainder
             GUI.AddTask addtask = new GUI.AddTask();
             addtask.ShowDialog(this);
             addtask.Dispose();
-            updateTaskList(); 
+            updateTaskList();
+            createTreeView.updateTreeView();
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace TaskRemainder
         private void todoGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // if user click on first column 
-            if (e.ColumnIndex == 4)
+            if ((e.ColumnIndex == 4) && (e.RowIndex != -1))
             {
                 int i = e.RowIndex;
                 DataGridViewCell cell = todoGridView["taskDesc", i];
@@ -127,26 +128,29 @@ namespace TaskRemainder
         private void toolSBCreateFolder_Click(object sender, EventArgs e)
         {
             TreeNode selected_node = treeView_taskList.SelectedNode;
-            if(selected_node != null)
+            string idParent = "0";
+            if ((selected_node != null) && (selected_node.Parent != null))
             {
-                dbrespons = DBOperation.createNewFolder("New folder", selected_node.Tag.ToString());
-                if (dbrespons.result != DBStatus.InsertSuccessful)
-                {
-                    MessageBox.Show("Error when creating new folder!", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                int row = 0;
-                dbrespons = DBOperation.getLastInsertedRowID(ref row);
-                if(dbrespons.result != DBStatus.SelectSuccessful)
-                {
-                    MessageBox.Show("Error when getting last row id", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                createTreeView.createNewFolder("New folder", row.ToString());
+                idParent = selected_node.Tag.ToString();
             }
+
+            dbrespons = DBOperation.createNewFolder("New folder", idParent);
+            if (dbrespons.result != DBStatus.InsertSuccessful)
+            {
+                MessageBox.Show("Error when creating new folder!", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int row = 0;
+            dbrespons = DBOperation.getLastInsertedRowID(ref row);
+            if (dbrespons.result != DBStatus.SelectSuccessful)
+            {
+                MessageBox.Show("Error when getting last row id", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            createTreeView.createNewFolder("New folder", row.ToString());
         }
 
         private void treeView_taskList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -200,12 +204,108 @@ namespace TaskRemainder
         }
         #endregion
 
+        /// <summary>
+        /// Removing task or folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolSBRemove_Click(object sender, EventArgs e)
         {
+            TreeNode selected = treeView_taskList.SelectedNode;
+            if (selected != null)
+            {
+                if (selected.Name.ToString().Equals("F"))
+                {
+                    createTreeView.removeFolderTask(selected); // removing selected folder
+                }
+                else if (selected.Name.ToString().Equals("T"))
+                {
+                    createTreeView.removeTask(selected); // removing selected task
+                }
+                // updating data after delete
+                createTreeView.updateTreeView();
+                updateTaskList();
+            }
         }
 
         private void treeView_taskList_AfterSelect(object sender, TreeViewEventArgs e)
         {
+        }
+
+        /// <summary>
+        /// Updating Folder name
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeView_taskList_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Node.Name.ToString().Equals("F"))
+            {
+                string idFolder = e.Node.Tag.ToString();
+                string folderName = e.Label;
+                if (e.Label == null) return; // return if nothing was been changed
+
+                dbrespons = DBOperation.updateFolderName(idFolder, folderName);
+                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error when changing folder name", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+            }
+        }
+
+        #region Edit tree node label
+        private void treeView_taskList_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Node != null)
+            {
+                if (e.Node.Name.ToString().Equals("F"))
+                {
+                    e.CancelEdit = false;
+                }
+                else
+                {
+                    e.CancelEdit = true;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Turn on edit mode after double click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeView_taskList_DoubleClick(object sender, EventArgs e)
+        {
+            TreeNode node = treeView_taskList.SelectedNode;
+            if (node != null)
+            {
+                treeView_taskList.LabelEdit = true;
+                if (!node.IsEditing)
+                {
+                    node.BeginEdit();
+                }
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// Describe when user want see finished tasks
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void showFinishedTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (showFinishedTasksToolStripMenuItem.Checked)
+            {
+                showFinishedTasksToolStripMenuItem.Checked = false;
+            }
+            else
+            {
+                showFinishedTasksToolStripMenuItem.Checked = true;
+            }
         }
 
     }

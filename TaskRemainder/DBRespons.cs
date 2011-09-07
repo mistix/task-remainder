@@ -19,7 +19,9 @@ namespace TaskRemainder
         UpdateError,
         SelectError,
         InitDBError,
-        OpenError
+        OpenError,
+        DeleteSuccessful,
+        DeleteError
     };
 
 

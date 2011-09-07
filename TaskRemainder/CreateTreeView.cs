@@ -28,6 +28,7 @@ namespace TaskRemainder
         }
         #endregion
 
+        #region Initialization treeView and update treeView
         /// <summary>
         /// Method for initialization folders tree
         /// </summary>
@@ -53,13 +54,14 @@ namespace TaskRemainder
 
             treeView.EndUpdate();
         }
+        #endregion
 
         #region Creating new node based on parent
         /// <summary>
-        /// 
+        /// Searching for folders and tasks
         /// </summary>
         /// <param name="parent"></param>
-        private void createNewNode(string parent, TreeNodeCollection node)
+        public void createNewNode(string parent, TreeNodeCollection node)
         {
             dbrespons = DBOperation.getFolderByParent(parent, ref folder);
             if (dbrespons.result != DBStatus.SelectSuccessful)
@@ -110,7 +112,7 @@ namespace TaskRemainder
         }
         #endregion
 
-        #region Creating new folder, moving node up, moving node down
+        #region Creating new folder
         /// <summary>
         /// Creating new folder, if nothing are selected create folder in main node else create folder in 
         /// selected node
@@ -120,7 +122,7 @@ namespace TaskRemainder
         public void createNewFolder(string folderName, string idFolder)
         {
             TreeNode sel_node = this.treeView.SelectedNode;
-            if (sel_node.Parent != null)
+            if ((sel_node != null) && (sel_node.Parent != null))
             {
                 sel_node = sel_node.Parent;
                 TreeNode nnode = new TreeNode();
@@ -138,28 +140,117 @@ namespace TaskRemainder
                 treeView.Nodes.Add(nnode);
             }
         }
+        #endregion
 
+        #region Removing folder and all it contains
+        /// <summary>
+        /// Removing folder from treeView
+        /// </summary>
+        /// <param name="node">Node that contains folder</param>
         public void removeFolderTask(TreeNode node)
         {
             if (node != null)
             {
                 if (node.Nodes.Count != 0)
                 {
+                    DialogResult result = MessageBox.Show("Removing folder will remove whole contins of folder", "Question",
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                    if (result == DialogResult.OK)
+                    {
+                        removeFolderTaskNode(node);
+                    }
+                }
+                else if (node.Nodes.Count == 0)
+                {
+                    dbrespons = DBOperation.removingFolder(node.Tag.ToString());
+                    if (dbrespons.result != DBStatus.DeleteSuccessful)
+                    {
+                        MessageBox.Show("Problem removing folder!", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removing folders contains task or other folders
+        /// </summary>
+        /// <param name="node">Node to remove</param>
+        private void removeFolderTaskNode(TreeNode node)
+        {
+            if (node == null) return; // finish
+
+            // removing node
+            if (node.Nodes.Count == 0)
+            {
+                dbrespons = DBOperation.removingFolder(node.Tag.ToString());
+                if (dbrespons.result != DBStatus.DeleteSuccessful)
+                {
+                    MessageBox.Show("Problem removing folder!", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+                return; // finish
+            }
+
+            // removing node nodes
+            foreach (TreeNode item in node.Nodes)
+            {
+                // folder can have subfolders
+                if (item.Name.ToString().Equals("F"))
+                {
+                    if (node.Nodes.Count != 0) // removing deeper levels
+                        removeFolderTaskNode(node.Nodes[0]);
+
+                    dbrespons = DBOperation.removingFolder(node.Tag.ToString());
+                    if (dbrespons.result != DBStatus.DeleteSuccessful)
+                    {
+                        MessageBox.Show("Problem removing folder!", "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                // tasks can't have subtasks
+                else if (item.Name.ToString().Equals("T"))
+                {
+                    removeTask(node);
                 }
             }
         }
         #endregion
     
         #region Moving nodes
+        /// <summary>
+        /// Moving node or folder one position up
+        /// </summary>
+        /// <param name="node">Node to move</param>
         public void nodeUp(TreeNode node)
         {
-            TreeNode parent = node.Parent.Parent;
+            TreeNode parent = null;
+            if ((node != null) && (node.Parent != null) && (node.Parent.Parent != null))
+            {
+                parent = node.Parent.Parent;
+            }
+
             if (parent != null)
             {
                 TreeNode copy = (TreeNode)node.Clone();
                 parent.Nodes.Add(copy);
                 treeView.SelectedNode = copy;
                 node.Remove();
+
+                // information about parent
+                string idParent = parent.Tag.ToString();
+                string idFolder = copy.Tag.ToString();
+
+                dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
+                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error durning updating folder position!", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
             else if (parent == null)
             {
@@ -167,6 +258,18 @@ namespace TaskRemainder
                 treeView.Nodes.Add(copy);
                 treeView.SelectedNode = copy;
                 node.Remove();
+
+                // information about parent
+                string idParent = "0";
+                string idFolder = copy.Tag.ToString();
+
+                dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
+                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error durning updating folder position!", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
         }
 
@@ -222,9 +325,38 @@ namespace TaskRemainder
                 prev.Nodes.Add(clone);
                 treeView.SelectedNode = clone;
                 node.Remove();
+
+                // information about parent
+                string idParent = clone.Parent.Tag.ToString();
+                string idFolder = clone.Tag.ToString();
+
+                dbrespons = DBOperation.updateFolderPosition(idParent, clone.Text, idFolder);
+                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error durning updating folder position!", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
         }
         #endregion
 
+        #region Remove task
+        /// <summary>
+        /// Removing task based on node
+        /// </summary>
+        /// <param name="node"></param>
+        public void removeTask(TreeNode node)
+        {
+            string idTask = node.Tag.ToString();
+            dbrespons = DBOperation.removingTask(idTask);
+            if (dbrespons.result != DBStatus.DeleteSuccessful)
+            {
+                MessageBox.Show("Error: deleteing task!", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+        }
+        #endregion
     }
 }

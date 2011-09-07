@@ -19,7 +19,7 @@ namespace TaskRemainder
         static string dataBase = "task-remainder.sql";
         #endregion
 
-
+		
         #region All methods connected with transaction 
         private static void OpenTransaction()
         {
@@ -52,7 +52,7 @@ namespace TaskRemainder
                 transaction = null;
             }
         }
-
+		
         private static void CommitTransaction()
         {
             if (transaction != null)
@@ -98,7 +98,7 @@ namespace TaskRemainder
                             //Creating Folders table
                             command.CommandText = "CREATE TABLE [Folder] (" +
                                 "[idFolder] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                "[folderName] VARCHAR(255) UNIQUE NOT NULL, " +
+                                "[folderName] VARCHAR(255) NOT NULL, " +
                                 "[idParentFolder] INTEGER  NULL)";
                             command.ExecuteNonQuery();
 
@@ -366,8 +366,9 @@ namespace TaskRemainder
         /// <param name="idTask">Task ID</param>
         /// <param name="tag">Array contains tags found in task message</param>
         /// <param name="context">Array of context found in task message</param>
+        /// <param name="idFolder">ID of folder who contains current task</param>
         /// <returns>InsertError or InsertSuccessful</returns>
-        public static DBRespons insertContainerDB(decimal idTask, ArrayList tag, ArrayList context)
+        public static DBRespons insertContainerDB(decimal idTask, ArrayList tag, ArrayList context, string idFolder)
         {
             try
             {
@@ -390,7 +391,7 @@ namespace TaskRemainder
                     {
                         DataRow row = data.NewRow();
                         row[0] = idTask;
-                        row[3] = null;
+                        row[3] = idFolder;
 
                         command.CommandText = "select idTag from Tag where tagName= :name";
                         command.Parameters.Clear();
@@ -424,7 +425,7 @@ namespace TaskRemainder
                     {
                         DataRow row = data.NewRow();
                         row[0] = idTask;
-                        row[3] = null;
+                        row[3] = idFolder;
 
                         command.CommandText = "select idContext from Context where contextName= :name";
                         command.Parameters.Add("name", DbType.String).Value = context[i];
@@ -447,6 +448,7 @@ namespace TaskRemainder
                         // preparing data
                         row[1] = idTag;
                         row[2] = idContext;
+                        data.Rows.InsertAt(row, 0);
                     }
                 }
 
@@ -456,7 +458,7 @@ namespace TaskRemainder
                     {
                         DataRow row = data.NewRow();
                         row[0] = idTask;
-                        row[3] = null;
+                        row[3] = idFolder;
 
                         command.CommandText = "select idTag from Tag where tagName= :name";
                         command.Parameters.Add("name", DbType.String).Value = tag[i];
@@ -471,18 +473,31 @@ namespace TaskRemainder
                         // preparing data
                         row[1] = idTag;
                         row[2] = idContext;
+                        data.Rows.InsertAt(row, 0);
                     }
+                }
+
+                // no tags and context in message
+                if ((tagCounter == 0) && (contextCounter == 0))
+                {
+                    DataRow row = data.NewRow();
+                    row[0] = idTask;
+                    row[3] = idFolder;
+                    row[1] = null;
+                    row[2] = null;
+                    data.Rows.InsertAt(row, 0);
                 }
 
                 // inserting whole date
                 foreach (DataRow row in data.Rows)
                 {
-                    command.CommandText = "insert into Container(Tasks_idTasks, Context_idContext, Tag_idTag) " +
-                        " values(:idTask, :idContext, :idTag)";
+                    command.CommandText = "insert into Container(Tasks_idTasks, Context_idContext, Tag_idTag, Folder_idFolder) " +
+                        " values(:idTask, :idContext, :idTag, :idFolder)";
                     command.Parameters.Clear();
                     command.Parameters.Add("idTask", DbType.VarNumeric).Value = row[0];
                     command.Parameters.Add("idContext", DbType.VarNumeric).Value = row[2];
                     command.Parameters.Add("idTag", DbType.VarNumeric).Value = row[1];
+                    command.Parameters.Add("idFolder", DbType.VarNumeric).Value = row[3];
                     command.Prepare();
                     command.ExecuteNonQuery();
                 }
@@ -624,7 +639,7 @@ namespace TaskRemainder
             try
             {
                 OpenTransaction();
-                command.CommandText = "insert into Tasks values(:folder, :parent)";
+                command.CommandText = "insert into Folder values((select max(idFolder)+1 from Folder),:folder, :parent)";
                 command.Parameters.Add("folder", DbType.String).Value = folderName;
                 command.Parameters.Add("parent", DbType.VarNumeric).Value = idParentFolder;
                 command.Prepare();
@@ -665,5 +680,147 @@ namespace TaskRemainder
             return new DBRespons(DBStatus.SelectSuccessful);
         }
         #endregion
+
+        #region Updating folder and task position
+        /// <summary>
+        /// Updating position of folder
+        /// </summary>
+        /// <param name="idParent">ID parent folder if 0 it is root</param>
+        /// <param name="folderName">Name of folder</param>
+        /// <param name="idFolder">ID folder</param>
+        /// <returns>UpdateSuccessful or UpdateError</returns>
+        public static DBRespons updateFolderPosition(string idParent, string folderName, string idFolder)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "update Folder set folderName = :name, idParentFolder = :parent where idFolder = :idF";
+                command.Parameters.Add("parent", DbType.VarNumeric).Value = idParent;
+                command.Parameters.Add("idF", DbType.VarNumeric).Value = idFolder;
+                command.Parameters.Add("name", DbType.String).Value = folderName;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+
+        /// <summary>
+        /// Updating task position
+        /// </summary>
+        /// <param name="idTasks">ID task</param>
+        /// <param name="idFolder">ID folder</param>
+        /// <returns>UpdateSuccessful or UpdateError</returns>
+        public static DBRespons updateTaskPosition(string idTasks, string idFolder)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "update Container set Folder_idFolder = :idFolder where Task_idTasks = :idTask";
+                command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idFolder;
+                command.Parameters.Add("idTask", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+        #endregion
+
+        #region Update folder name
+        /// <summary>
+        /// Updating folder name after user changed it
+        /// </summary>
+        /// <param name="idFolder">ID folder</param>
+        /// <param name="folderName">New folder name</param>
+        /// <returns>UpdateError or UpdateSuccessful</returns>
+        public static DBRespons updateFolderName(string idFolder, string folderName)
+        {
+            try
+            {
+                command.CommandText = "update Folder set folderName = :folder where idFolder = :idF";
+                command.Parameters.Add("folder", DbType.String).Value = folderName;
+                command.Parameters.Add("idF", DbType.VarNumeric).Value = idFolder;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+        #endregion
+
+        #region Removing folder
+        /// <summary>
+        /// Removing folder from DB
+        /// </summary>
+        /// <param name="idFolder">ID folder to remove</param>
+        /// <returns>DeleteError or DeleteSuccessful</returns>
+        public static DBRespons removingFolder(string idFolder)
+        {
+            try
+            {
+                command.CommandText = "delete from Folder where idFolder = :idFolder";
+                command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idFolder;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.DeleteError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.DeleteSuccessful);
+        }
+        #endregion
+
+        #region Removnig Container
+        /// <summary>
+        /// Removing folder from Container
+        /// </summary>
+        /// <param name="idTasks">ID of task to remove</param>
+        /// <returns>DeleteError or DeleteSuccessful</returns>
+        public static DBRespons removingTask(string idTasks)
+        {
+            try
+            {
+                // removing from Container
+                command.CommandText = "delete from Container where Folder_idFolder = :idFolder";
+                command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+                command.ExecuteNonQuery();
+                
+                // removing from Tasks
+                command.Parameters.Clear();
+                command.CommandText = "delete from Tasks where idTasks = :idFolder";
+                command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.DeleteError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.DeleteSuccessful);
+        }
+        #endregion
+
     }
 }
