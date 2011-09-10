@@ -66,6 +66,9 @@
     <Compile Include="GUI\AddTask.Designer.cs">
       <DependentUpon>AddTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ToolTipNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="mainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +95,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

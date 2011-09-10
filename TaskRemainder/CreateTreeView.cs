@@ -12,7 +12,6 @@ namespace TaskRemainder
     {
         #region Variables
         TreeView treeView;
-        DataTable dbtree;
         DBRespons dbrespons;
         DataTable folder;
         #endregion
@@ -45,6 +44,7 @@ namespace TaskRemainder
         /// </summary>
         public void updateTreeView()
         {
+            // FIXME in feauture make state collaps or extend tree view constant
             treeView.BeginUpdate();
             treeView.Nodes.Clear();
             
@@ -84,6 +84,34 @@ namespace TaskRemainder
                 searchForTasks(item["idFolder"].ToString(), newNode.Nodes);
             }
 
+        }
+
+        /// <summary>
+        /// Making structure of directories
+        /// </summary>
+        /// <param name="parent">ID parent</param>
+        /// <param name="node">node</param>
+        public void createFolderTree(string parent, TreeNodeCollection node)
+        {
+            dbrespons = DBOperation.getFolderByParent(parent, ref folder);
+            if (dbrespons.result != DBStatus.SelectSuccessful)
+            {
+                MessageBox.Show("Error durning creating folders structure", "Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (DataRow item in folder.Rows)
+            {
+                TreeNode newNode = new TreeNode();
+                newNode.ImageIndex = 0; // image
+                newNode.SelectedImageIndex = 0;
+                newNode.Tag = item["idFolder"].ToString();
+                newNode.Name = "F";
+                newNode.Text = item["folderName"].ToString();
+                node.Add(newNode); // adding new node
+                createNewNode(item["idFolder"].ToString(), newNode.Nodes);
+            }
         }
         #endregion
 
@@ -233,7 +261,14 @@ namespace TaskRemainder
                 parent = node.Parent.Parent;
             }
 
-            if (parent != null)
+            // Folder1 
+            //      |---> Folder2
+            //      |---> Folder3
+            // ------ after operation --------------
+            // Folder3
+            // Folder1
+            //      |---> Folder2
+            if (parent != null) // folder on level up
             {
                 TreeNode copy = (TreeNode)node.Clone();
                 parent.Nodes.Add(copy);
@@ -241,18 +276,31 @@ namespace TaskRemainder
                 node.Remove();
 
                 // information about parent
-                string idParent = parent.Tag.ToString();
-                string idFolder = copy.Tag.ToString();
+                string idParent = parent.Tag.ToString(); // parent id
+                string idFolder = copy.Tag.ToString(); // idFolder or idTask
 
-                dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
-                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                if (node.Name.Equals("F")) // operation on folders
                 {
-                    MessageBox.Show("Error durning updating folder position!", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
+                    if (dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning updating folder position!", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                else if (node.Name.Equals("T"))
+                {
+                    dbrespons = DBOperation.updateTaskPosition(idFolder, idParent);
+                    if(dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning updating task position!", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
             }
-            else if (parent == null)
+            else if (parent == null) // folder is in root node
             {
                 TreeNode copy = (TreeNode)node.Clone();
                 treeView.Nodes.Add(copy);
@@ -263,12 +311,26 @@ namespace TaskRemainder
                 string idParent = "0";
                 string idFolder = copy.Tag.ToString();
 
-                dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
-                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                if (copy.Name.Equals("F")) // moving folder
                 {
-                    MessageBox.Show("Error durning updating folder position!", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    dbrespons = DBOperation.updateFolderPosition(idParent, copy.Text, idFolder);
+                    if (dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning updating folder position!", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+
+                if (copy.Name.Equals("T")) // moving task
+                {
+                    dbrespons = DBOperation.updateTaskPosition(idFolder, idParent);
+                    if(dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning updating task position!", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
             }
         }
@@ -316,10 +378,18 @@ namespace TaskRemainder
             moveNode(node, 2);
         }
 
+        // Moving node up and down throught treeView structure
+        // Folder1
+        //     |--> Task1
+        //     |--> Task2
+        // after making node down
+        // Folder1
+        //     |--> Task1
+        // Task2
         public void nodeDown(TreeNode node)
         {
             TreeNode prev = node.PrevNode;
-            if (prev != null)
+            if ((prev != null) && (node.Name.Equals("F"))) // folder
             {
                 TreeNode clone = (TreeNode)node.Clone();
                 prev.Nodes.Add(clone);
@@ -334,6 +404,27 @@ namespace TaskRemainder
                 if (dbrespons.result != DBStatus.UpdateSuccessful)
                 {
                     MessageBox.Show("Error durning updating folder position!", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            if ((prev != null) && (node.Name.Equals("T"))) // operations for task
+            {
+                TreeNode clone = (TreeNode)node.Clone();
+                prev.Nodes.Add(clone);
+                treeView.SelectedNode = clone;
+                node.Remove();
+
+                // information about parent
+                string idParent = clone.Parent.Tag.ToString();
+                string idFolder = clone.Tag.ToString();
+
+                // saving data into DB
+                dbrespons = DBOperation.updateTaskPosition(idFolder, idParent);
+                if(dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error durning updating task position!", "Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }

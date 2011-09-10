@@ -8,8 +8,6 @@ using System.Data;
 
 namespace TaskRemainder
 {
-    //TODO make update operation for finish tasks
-
     public class DBOperation
     {
         #region Variables
@@ -372,8 +370,19 @@ namespace TaskRemainder
         {
             try
             {
-                int tagCounter = tag.Count;
-                int contextCounter = context.Count;
+                int tagCounter;
+                int contextCounter;
+
+                if (tag == null)
+                    tagCounter = 0;
+                else
+                    tagCounter = tag.Count;
+
+                if (context == null)
+                    contextCounter = 0;
+                else
+                    contextCounter = context.Count;
+
                 string idTag;
                 string idContext;
 
@@ -539,6 +548,33 @@ namespace TaskRemainder
             }
 
             return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
+
+        #region Updating task status
+        /// <summary>
+        /// Updating data describing if task is finished or not
+        /// </summary>
+        /// <param name="idTask">ID task</param>
+        /// <param name="finished">true or false</param>
+        /// <returns>UpdateError, UpdateSuccessful</returns>
+        public static DBRespons taskFinished(string idTask, bool finished)
+        {
+            try
+            {
+                command.CommandText = "update Tasks set finished = :finished where idTasks = :idTask";
+                command.Parameters.Add("finished", DbType.Boolean).Value = finished;
+                command.Parameters.Add("idTask", DbType.VarNumeric).Value = idTask;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
         }
         #endregion
 
@@ -721,9 +757,70 @@ namespace TaskRemainder
             try
             {
                 OpenTransaction();
-                command.CommandText = "update Container set Folder_idFolder = :idFolder where Task_idTasks = :idTask";
+                command.CommandText = "update Container set Folder_idFolder = :idFolder where Tasks_idTasks = :idTask";
                 command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idFolder;
                 command.Parameters.Add("idTask", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+        #endregion
+
+        #region Updating task information
+        /// <summary>
+        /// Updating informations about task
+        /// </summary>
+        /// <param name="idTasks">ID task</param>
+        /// <param name="taskDesc">task information</param>
+        /// <param name="taskEnd">task date end</param>
+        /// <param name="taskBegin">task date start</param>
+        /// <param name="finished">is task finished</param>
+        /// <returns>UpdateSuccessful or UpdateError</returns>
+        public static DBRespons updateTasksDB(string idTasks, string taskDesc, string taskEnd, string taskBegin, bool finished)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "update Tasks set taskDesc = :taskDesc, taskEnd = :taskEnd, taskStar = :taskBegin, " +
+                    " finished = :finished where idTasks = :idTasks";
+                command.Parameters.Add("taskDesc", DbType.String).Value = taskDesc;
+                command.Parameters.Add("taskEnd", DbType.String).Value = taskEnd;
+                command.Parameters.Add("taskStart", DbType.String).Value = taskBegin;
+                command.Parameters.Add("finished", DbType.Boolean).Value = finished;
+                command.Parameters.Add("idTasks", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                RollbackTransaction();
+                return new DBRespons(DBStatus.UpdateError, ex.Message);
+            }
+            CommitTransaction();
+            return new DBRespons(DBStatus.UpdateSuccessful);
+        }
+
+        /// <summary>
+        /// Updating tasks description (used in edit task treeView)
+        /// </summary>
+        /// <param name="idTasks">ID tasks</param>
+        /// <param name="taskDesc">task description</param>
+        /// <returns>UpdateSuccessful or UpdateError</returns>
+        public static DBRespons updateTaskDescriptionDB(string idTasks, string taskDesc)
+        {
+            try
+            {
+                OpenTransaction();
+                command.CommandText = "update Tasks set taskDesc = :taskDesc where idTasks = :idTasks";
+                command.Parameters.Add("taskDesc", DbType.String).Value = taskDesc;
+                command.Parameters.Add("idTasks", DbType.VarNumeric).Value = idTasks;
                 command.Prepare();
                 command.ExecuteNonQuery();
             }
@@ -800,7 +897,7 @@ namespace TaskRemainder
             try
             {
                 // removing from Container
-                command.CommandText = "delete from Container where Folder_idFolder = :idFolder";
+                command.CommandText = "delete from Container where Tasks_idTasks = :idFolder";
                 command.Parameters.Add("idFolder", DbType.VarNumeric).Value = idTasks;
                 command.Prepare();
                 command.ExecuteNonQuery();

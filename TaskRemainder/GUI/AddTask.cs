@@ -69,6 +69,17 @@ namespace TaskRemainder.GUI
                 dateEnd = null;
                 dateStart = null;
             }
+
+            // checking if folder was selected
+            if (!checkBoxFolder.Checked)
+            {
+                if (comboBoxFolder.Text.Equals("--- Task folder ---"))
+                {
+                    MessageBox.Show("Pleas select folder!", "Information", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+            }
             
             // Processing task, searching tags and contexts
             string message = messageBox.Text;
@@ -179,7 +190,8 @@ namespace TaskRemainder.GUI
         #region Load add tasks
         private void AddTask_Load_1(object sender, EventArgs e)
         {
-            c_treeView.createNewNode("0", comboBoxFolder.TreeView.Nodes);
+            // creating folder tree
+            c_treeView.createFolderTree("0", comboBoxFolder.TreeView.Nodes);
         }
         #endregion
 

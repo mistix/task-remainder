@@ -31,6 +31,7 @@
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBoxDate = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.checkBoxFolder = new System.Windows.Forms.CheckBox();
             this.labelFolder = new System.Windows.Forms.Label();
             this.checkBoxEnd = new System.Windows.Forms.CheckBox();
             this.labelStart = new System.Windows.Forms.Label();
@@ -44,7 +45,6 @@
             this.buttonBack = new System.Windows.Forms.Button();
             this.groupBoxMessage = new System.Windows.Forms.GroupBox();
             this.messageBox = new System.Windows.Forms.RichTextBox();
-            this.checkBoxFolder = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel.SuspendLayout();
             this.groupBoxDate.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -98,7 +98,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.33788F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.66212F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 54F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel1.Controls.Add(this.checkBoxFolder, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelFolder, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxEnd, 2, 1);
@@ -118,12 +118,23 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(400, 71);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // checkBoxFolder
+            // 
+            this.checkBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.checkBoxFolder.AutoSize = true;
+            this.checkBoxFolder.Location = new System.Drawing.Point(364, 49);
+            this.checkBoxFolder.Name = "checkBoxFolder";
+            this.checkBoxFolder.Size = new System.Drawing.Size(15, 19);
+            this.checkBoxFolder.TabIndex = 8;
+            this.checkBoxFolder.UseVisualStyleBackColor = true;
+            this.checkBoxFolder.CheckedChanged += new System.EventHandler(this.checkBoxFolder_CheckedChanged);
+            // 
             // labelFolder
             // 
             this.labelFolder.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelFolder.AutoSize = true;
             this.labelFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelFolder.Location = new System.Drawing.Point(29, 49);
+            this.labelFolder.Location = new System.Drawing.Point(28, 49);
             this.labelFolder.Name = "labelFolder";
             this.labelFolder.Size = new System.Drawing.Size(66, 18);
             this.labelFolder.TabIndex = 6;
@@ -133,7 +144,7 @@
             // 
             this.checkBoxEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxEnd.AutoSize = true;
-            this.checkBoxEnd.Location = new System.Drawing.Point(365, 26);
+            this.checkBoxEnd.Location = new System.Drawing.Point(364, 26);
             this.checkBoxEnd.Name = "checkBoxEnd";
             this.checkBoxEnd.Size = new System.Drawing.Size(15, 17);
             this.checkBoxEnd.TabIndex = 5;
@@ -145,7 +156,7 @@
             this.labelStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelStart.AutoSize = true;
             this.labelStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelStart.Location = new System.Drawing.Point(6, 2);
+            this.labelStart.Location = new System.Drawing.Point(5, 2);
             this.labelStart.Name = "labelStart";
             this.labelStart.Size = new System.Drawing.Size(89, 18);
             this.labelStart.TabIndex = 0;
@@ -156,7 +167,7 @@
             this.labelEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelEnd.AutoSize = true;
             this.labelEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelEnd.Location = new System.Drawing.Point(8, 25);
+            this.labelEnd.Location = new System.Drawing.Point(7, 25);
             this.labelEnd.Name = "labelEnd";
             this.labelEnd.Size = new System.Drawing.Size(87, 18);
             this.labelEnd.TabIndex = 1;
@@ -165,7 +176,7 @@
             // dateTimePickerStart
             // 
             this.dateTimePickerStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerStart.Location = new System.Drawing.Point(101, 3);
+            this.dateTimePickerStart.Location = new System.Drawing.Point(100, 3);
             this.dateTimePickerStart.Name = "dateTimePickerStart";
             this.dateTimePickerStart.Size = new System.Drawing.Size(241, 21);
             this.dateTimePickerStart.TabIndex = 2;
@@ -174,7 +185,7 @@
             // dateTimePickerEnd
             // 
             this.dateTimePickerEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerEnd.Location = new System.Drawing.Point(101, 26);
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(100, 26);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
             this.dateTimePickerEnd.Size = new System.Drawing.Size(241, 21);
             this.dateTimePickerEnd.TabIndex = 3;
@@ -183,7 +194,7 @@
             // 
             this.checkBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxStartDate.AutoSize = true;
-            this.checkBoxStartDate.Location = new System.Drawing.Point(365, 3);
+            this.checkBoxStartDate.Location = new System.Drawing.Point(364, 3);
             this.checkBoxStartDate.Name = "checkBoxStartDate";
             this.checkBoxStartDate.Size = new System.Drawing.Size(15, 17);
             this.checkBoxStartDate.TabIndex = 4;
@@ -194,7 +205,7 @@
             // 
             this.comboBoxFolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxFolder.FormattingEnabled = true;
-            this.comboBoxFolder.Location = new System.Drawing.Point(101, 49);
+            this.comboBoxFolder.Location = new System.Drawing.Point(100, 49);
             this.comboBoxFolder.Name = "comboBoxFolder";
             this.comboBoxFolder.Size = new System.Drawing.Size(241, 23);
             this.comboBoxFolder.TabIndex = 7;
@@ -261,17 +272,6 @@
             this.messageBox.Size = new System.Drawing.Size(408, 184);
             this.messageBox.TabIndex = 0;
             this.messageBox.Text = "";
-            // 
-            // checkBoxFolder
-            // 
-            this.checkBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.checkBoxFolder.AutoSize = true;
-            this.checkBoxFolder.Location = new System.Drawing.Point(365, 49);
-            this.checkBoxFolder.Name = "checkBoxFolder";
-            this.checkBoxFolder.Size = new System.Drawing.Size(15, 19);
-            this.checkBoxFolder.TabIndex = 8;
-            this.checkBoxFolder.UseVisualStyleBackColor = true;
-            this.checkBoxFolder.CheckedChanged += new System.EventHandler(this.checkBoxFolder_CheckedChanged);
             // 
             // AddTask
             // 

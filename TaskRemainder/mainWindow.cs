@@ -16,11 +16,24 @@ namespace TaskRemainder
         DBRespons dbrespons;
         DataTable task;
         CreateTreeView createTreeView;
+        DataGridViewCellStyle strikedOut;
+        DataGridViewCellStyle regular;
+        GUI.ToolTipNode tip;
+        TreeNode oldNode; // represent old selected node
         #endregion
+
         public mainWindow()
         {
             InitializeComponent();
             createTreeView = new CreateTreeView(ref treeView_taskList);
+
+            // style for strikeout cell
+            strikedOut = new DataGridViewCellStyle(taskDesc.DefaultCellStyle);
+            strikedOut.Font = new Font(strikedOut.Font, FontStyle.Strikeout);
+
+            // style for regular cell
+            regular = new DataGridViewCellStyle(taskDesc.DefaultCellStyle);
+            regular.Font = new Font(regular.Font, FontStyle.Regular);
         }
 
         /// <summary>
@@ -42,6 +55,7 @@ namespace TaskRemainder
             // creating new tree folder list
             updateTaskList();
             createTreeView.initTreeView();
+            tip = new GUI.ToolTipNode();
         }
 
 
@@ -83,6 +97,17 @@ namespace TaskRemainder
                 return;
             }
             todoGridView.DataSource = task;
+
+            // FIXME dosn't work don't know why
+            // task finished
+            foreach (DataGridViewRow row in todoGridView.Rows)
+            {
+                if ((bool)row.Cells["finished"].Value)
+                {
+                    DataGridViewCell cell = row.Cells["taskDesc"];
+                    cell.Style = strikedOut;
+                }
+            }
         }
 
         /// <summary>
@@ -99,23 +124,35 @@ namespace TaskRemainder
                 DataGridViewCell cell = todoGridView["taskDesc", i];
                 bool finish = (bool)todoGridView["finished", i].Value;
 
-                // new style for taskDesc strikeout when finish is selected
-                DataGridViewCellStyle strikedOut = new DataGridViewCellStyle(taskDesc.DefaultCellStyle);
-
-                //FIXME repair strikeout task description fast clicking == crash
+                // checked if is checked
                 if (!finish)
                 {
-                    // creating new style for cell
-                    strikedOut.Font = new Font(strikedOut.Font, FontStyle.Strikeout);
                     cell.Style = strikedOut;
                     todoGridView["finished", i].Value = "True";
+
+                    // saving data to DB
+                    dbrespons = DBOperation.taskFinished(todoGridView["idTasks", i].Value.ToString(), true);
+                    if (dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning update task status", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
 
                 if(finish)
                 {
-                    strikedOut.Font = new Font(strikedOut.Font, FontStyle.Regular);
-                    cell.Style = strikedOut;
+                    cell.Style = regular;
                     todoGridView["finished", i].Value = "False";
+
+                    // saving data to DB
+                    dbrespons = DBOperation.taskFinished(todoGridView["idTasks", i].Value.ToString(), true);
+                    if (dbrespons.result != DBStatus.UpdateSuccessful)
+                    {
+                        MessageBox.Show("Error durning update task status", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
             }
         }
@@ -151,11 +188,6 @@ namespace TaskRemainder
                 return;
             }
             createTreeView.createNewFolder("New folder", row.ToString());
-        }
-
-        private void treeView_taskList_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-
         }
 
         #region Operations on nodes
@@ -228,10 +260,7 @@ namespace TaskRemainder
             }
         }
 
-        private void treeView_taskList_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-        }
-
+        #region Updating labels on task and folder
         /// <summary>
         /// Updating Folder name
         /// </summary>
@@ -239,6 +268,7 @@ namespace TaskRemainder
         /// <param name="e"></param>
         private void treeView_taskList_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
+            // updating folder name
             if (e.Node.Name.ToString().Equals("F"))
             {
                 string idFolder = e.Node.Tag.ToString();
@@ -253,21 +283,37 @@ namespace TaskRemainder
                     return;
                 }
             }
+
+            // updating task message
+            if (e.Node.Name.ToString().Equals("T"))
+            {
+                string idTask = e.Node.Tag.ToString();
+                if (e.Label == null) return; // preventing ESC when editing node
+                string taskDesc = e.Label.ToString();
+                dbrespons = DBOperation.updateTaskDescriptionDB(idTask, taskDesc);
+                if (dbrespons.result != DBStatus.UpdateSuccessful)
+                {
+                    MessageBox.Show("Error durning updating task desc", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
         }
+        #endregion
 
         #region Edit tree node label
         private void treeView_taskList_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (e.Node != null)
             {
-                if (e.Node.Name.ToString().Equals("F"))
+                /*if (e.Node.Name.ToString().Equals("F"))
                 {
                     e.CancelEdit = false;
                 }
                 else
                 {
                     e.CancelEdit = true;
-                }
+                } */
             }
 
         }
@@ -306,6 +352,100 @@ namespace TaskRemainder
             {
                 showFinishedTasksToolStripMenuItem.Checked = true;
             }
+        }
+
+        private void mainWindow_VisibleChanged(object sender, EventArgs e)
+        {
+            updateTaskList();
+        }
+
+
+        /// <summary>
+        /// Tool tip for tasks
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeView_taskList_MouseMove(object sender, MouseEventArgs e)
+        {
+            TreeNode node = treeView_taskList.GetNodeAt(e.X, e.Y);
+            if (node != null)
+            {
+                if (node.Name != "F")
+                {
+                    if (oldNode != node)
+                    {
+                        tip.SetToolTip(treeView_taskList, node.Name);
+                        oldNode = node;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserting new task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            #region Insert new task
+            if ((e.KeyCode == Keys.Insert) && (tabControl1.SelectedIndex == 0))
+            {
+                // creating new task
+                decimal idTask = 0;
+                string idFolder = "0"; // idFolder 0 means root node
+                dbrespons = DBOperation.insertNewTask("New task", null, null, false, ref idTask);
+                if (dbrespons.result != DBStatus.InsertSuccessful)
+                {
+                    MessageBox.Show("Error durning inserting new task", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // new task into edit mode
+                TreeNode newNode = new TreeNode();
+                newNode.Name = "T";
+                newNode.Tag = idTask.ToString();
+                newNode.Text = "New task";
+                newNode.ImageIndex = 1;
+                newNode.SelectedImageIndex = 1;
+
+                // if node is selected insert new task into folder
+                TreeNode selNode = treeView_taskList.SelectedNode;
+                if ((selNode != null) && (selNode.Name.Equals("F")))
+                {
+                    idFolder = selNode.Tag.ToString();
+                    selNode.Nodes.Add(newNode);
+                }
+                else if ((selNode != null) && (selNode.Name.Equals("T")) && (selNode.Parent != null))
+                {
+                    idFolder = selNode.Parent.Tag.ToString();
+                    selNode.Parent.Nodes.Add(newNode);
+                }
+                else
+                {
+                    treeView_taskList.Nodes.Add(newNode);
+                }
+
+                // inserting task into container
+                dbrespons = DBOperation.insertContainerDB(idTask, null, null, idFolder);
+                if (dbrespons.result != DBStatus.InsertSuccessful)
+                {
+                    MessageBox.Show("Error durning inserting new task", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // new node is in edit mode
+                treeView_taskList.BeginUpdate();
+                // selected node
+                treeView_taskList.SelectedNode = newNode;
+                treeView_taskList.LabelEdit = true;
+                newNode.BeginEdit();
+                treeView_taskList.EndUpdate();
+            }
+            #endregion
+
         }
 
     }

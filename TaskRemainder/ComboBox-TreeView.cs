@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace TaskRemainder
 {
@@ -36,8 +37,13 @@ namespace TaskRemainder
         {
             if (dropDown != null)
             {
-                treeViewHost.Width = DropDownWidth;
+                treeView.BeginUpdate();
+                treeView.Width = DropDownWidth;
+                treeView.EndUpdate();
+                treeViewHost.Width = DropDownWidth; 
                 treeViewHost.Height = DropDownHeight;
+
+                // seting up new size
                 dropDown.Show(this, 0, this.Height);
                 dropDown.DropShadowEnabled = true;
             }
@@ -67,7 +73,6 @@ namespace TaskRemainder
             base.WndProc(ref m);
         }
 
-        // Edit: 10:37, remember to dispose the dropdown as it's not in the control collection. 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
