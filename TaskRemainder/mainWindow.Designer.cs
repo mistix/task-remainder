@@ -56,7 +56,6 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.taskList = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.treeView_taskList = new System.Windows.Forms.TreeView();
             this.toolStrip_taskList = new System.Windows.Forms.ToolStrip();
             this.toolSBCreateFolder = new System.Windows.Forms.ToolStripButton();
             this.toolSBRemove = new System.Windows.Forms.ToolStripButton();
@@ -64,6 +63,9 @@
             this.toolSBNext = new System.Windows.Forms.ToolStripButton();
             this.toolSBUp = new System.Windows.Forms.ToolStripButton();
             this.toolSBDown = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.treeView_taskList = new System.Windows.Forms.TreeView();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.todoList = new System.Windows.Forms.TabPage();
             this.todoGridView = new System.Windows.Forms.DataGridView();
             this.idTasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -71,7 +73,14 @@
             this.taskDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskStart = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.dateTimePickerStart = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
+            this.comboBoxContext = new System.Windows.Forms.ComboBox();
+            this.comboBoxTag = new System.Windows.Forms.ComboBox();
+            this.labelDateStart = new System.Windows.Forms.Label();
+            this.labelDateEnd = new System.Windows.Forms.Label();
+            this.labelContext = new System.Windows.Forms.Label();
+            this.labelTag = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -79,6 +88,11 @@
             this.taskList.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.toolStrip_taskList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+            this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.todoList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).BeginInit();
             this.SuspendLayout();
@@ -292,8 +306,8 @@
             // 
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.treeView_taskList, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.toolStrip_taskList, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.splitContainer, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -302,19 +316,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 93F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(661, 348);
             this.tableLayoutPanel2.TabIndex = 0;
-            // 
-            // treeView_taskList
-            // 
-            this.treeView_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView_taskList.LabelEdit = true;
-            this.treeView_taskList.Location = new System.Drawing.Point(3, 27);
-            this.treeView_taskList.Name = "treeView_taskList";
-            this.treeView_taskList.Size = new System.Drawing.Size(655, 318);
-            this.treeView_taskList.TabIndex = 0;
-            this.treeView_taskList.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_BeforeLabelEdit);
-            this.treeView_taskList.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_AfterLabelEdit);
-            this.treeView_taskList.DoubleClick += new System.EventHandler(this.treeView_taskList_DoubleClick);
-            this.treeView_taskList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeView_taskList_MouseMove);
             // 
             // toolStrip_taskList
             // 
@@ -392,6 +393,67 @@
             this.toolSBDown.Text = "Put node on node down";
             this.toolSBDown.Click += new System.EventHandler(this.toolSBDown_Click);
             // 
+            // splitContainer
+            // 
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.Location = new System.Drawing.Point(3, 27);
+            this.splitContainer.Name = "splitContainer";
+            // 
+            // splitContainer.Panel1
+            // 
+            this.splitContainer.Panel1.Controls.Add(this.treeView_taskList);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.Controls.Add(this.tableLayoutPanel3);
+            this.splitContainer.Panel2.Margin = new System.Windows.Forms.Padding(5);
+            this.splitContainer.Panel2.Padding = new System.Windows.Forms.Padding(5);
+            this.splitContainer.Size = new System.Drawing.Size(655, 318);
+            this.splitContainer.SplitterDistance = 484;
+            this.splitContainer.TabIndex = 2;
+            // 
+            // treeView_taskList
+            // 
+            this.treeView_taskList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView_taskList.LabelEdit = true;
+            this.treeView_taskList.Location = new System.Drawing.Point(0, 0);
+            this.treeView_taskList.Name = "treeView_taskList";
+            this.treeView_taskList.Size = new System.Drawing.Size(484, 318);
+            this.treeView_taskList.TabIndex = 1;
+            this.treeView_taskList.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_BeforeLabelEdit);
+            this.treeView_taskList.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_AfterLabelEdit);
+            this.treeView_taskList.DoubleClick += new System.EventHandler(this.treeView_taskList_DoubleClick);
+            this.treeView_taskList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeView_taskList_MouseMove);
+            this.treeView_taskList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_taskList_MouseUp);
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.3121F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.6879F));
+            this.tableLayoutPanel3.Controls.Add(this.labelTag, 0, 3);
+            this.tableLayoutPanel3.Controls.Add(this.labelContext, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.labelDateEnd, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.dateTimePickerStart, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.dateTimePickerEnd, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.comboBoxContext, 1, 2);
+            this.tableLayoutPanel3.Controls.Add(this.comboBoxTag, 1, 3);
+            this.tableLayoutPanel3.Controls.Add(this.labelDateStart, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(5, 5);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 8;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(157, 308);
+            this.tableLayoutPanel3.TabIndex = 0;
+            // 
             // todoList
             // 
             this.todoList.Controls.Add(this.todoGridView);
@@ -468,6 +530,76 @@
             this.taskEnd.Name = "taskEnd";
             this.taskEnd.ReadOnly = true;
             // 
+            // dateTimePickerStart
+            // 
+            this.dateTimePickerStart.Location = new System.Drawing.Point(71, 3);
+            this.dateTimePickerStart.Name = "dateTimePickerStart";
+            this.dateTimePickerStart.Size = new System.Drawing.Size(83, 20);
+            this.dateTimePickerStart.TabIndex = 0;
+            // 
+            // dateTimePickerEnd
+            // 
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(71, 41);
+            this.dateTimePickerEnd.Name = "dateTimePickerEnd";
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(83, 20);
+            this.dateTimePickerEnd.TabIndex = 1;
+            // 
+            // comboBoxContext
+            // 
+            this.comboBoxContext.FormattingEnabled = true;
+            this.comboBoxContext.Location = new System.Drawing.Point(71, 79);
+            this.comboBoxContext.Name = "comboBoxContext";
+            this.comboBoxContext.Size = new System.Drawing.Size(83, 21);
+            this.comboBoxContext.TabIndex = 2;
+            // 
+            // comboBoxTag
+            // 
+            this.comboBoxTag.FormattingEnabled = true;
+            this.comboBoxTag.Location = new System.Drawing.Point(71, 117);
+            this.comboBoxTag.Name = "comboBoxTag";
+            this.comboBoxTag.Size = new System.Drawing.Size(83, 21);
+            this.comboBoxTag.TabIndex = 3;
+            // 
+            // labelDateStart
+            // 
+            this.labelDateStart.AutoSize = true;
+            this.labelDateStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelDateStart.Location = new System.Drawing.Point(3, 0);
+            this.labelDateStart.Name = "labelDateStart";
+            this.labelDateStart.Size = new System.Drawing.Size(47, 32);
+            this.labelDateStart.TabIndex = 4;
+            this.labelDateStart.Text = "Task start";
+            // 
+            // labelDateEnd
+            // 
+            this.labelDateEnd.AutoSize = true;
+            this.labelDateEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelDateEnd.Location = new System.Drawing.Point(3, 38);
+            this.labelDateEnd.Name = "labelDateEnd";
+            this.labelDateEnd.Size = new System.Drawing.Size(47, 32);
+            this.labelDateEnd.TabIndex = 5;
+            this.labelDateEnd.Text = "Task end";
+            // 
+            // labelContext
+            // 
+            this.labelContext.AutoSize = true;
+            this.labelContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelContext.Location = new System.Drawing.Point(3, 76);
+            this.labelContext.Name = "labelContext";
+            this.labelContext.Size = new System.Drawing.Size(59, 16);
+            this.labelContext.TabIndex = 6;
+            this.labelContext.Text = "Context";
+            // 
+            // labelTag
+            // 
+            this.labelTag.AutoSize = true;
+            this.labelTag.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelTag.Location = new System.Drawing.Point(3, 114);
+            this.labelTag.Name = "labelTag";
+            this.labelTag.Size = new System.Drawing.Size(36, 16);
+            this.labelTag.TabIndex = 7;
+            this.labelTag.Text = "Tag";
+            // 
             // mainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -495,6 +627,12 @@
             this.tableLayoutPanel2.PerformLayout();
             this.toolStrip_taskList.ResumeLayout(false);
             this.toolStrip_taskList.PerformLayout();
+            this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+            this.splitContainer.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.todoList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.todoGridView)).EndInit();
             this.ResumeLayout(false);
@@ -509,9 +647,6 @@
         private System.Windows.Forms.ToolStripMenuItem dToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusBar;
         private System.Windows.Forms.ToolStripStatusLabel messageStrip;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage taskList;
-        private System.Windows.Forms.TabPage todoList;
         private System.Windows.Forms.ToolStripMenuItem newTaskToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
@@ -521,29 +656,41 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutApplicationToolStripMenuItem;
-        private System.Windows.Forms.DataGridView todoGridView;
         private System.Windows.Forms.ToolStripMenuItem showTagToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showContextToolStripMenuItem;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.TreeView treeView_taskList;
-        private System.Windows.Forms.ToolStrip toolStrip_taskList;
-        private System.Windows.Forms.DataGridViewTextBoxColumn idTasks;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Finished;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskStart;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
-        private System.Windows.Forms.ToolStripButton toolSBCreateFolder;
-        private System.Windows.Forms.ToolStripButton toolSBPrev;
-        private System.Windows.Forms.ToolStripButton toolSBNext;
-        private System.Windows.Forms.ToolStripButton toolSBUp;
-        private System.Windows.Forms.ToolStripButton toolSBDown;
-        private System.Windows.Forms.ToolStripButton toolSBRemove;
         private System.Windows.Forms.ToolStripMenuItem taskListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem showFinishedTasksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem todoListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showFinishedTasksToolStripMenuItem1;
-        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage taskList;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.ToolStrip toolStrip_taskList;
+        private System.Windows.Forms.ToolStripButton toolSBCreateFolder;
+        private System.Windows.Forms.ToolStripButton toolSBRemove;
+        private System.Windows.Forms.ToolStripButton toolSBPrev;
+        private System.Windows.Forms.ToolStripButton toolSBNext;
+        private System.Windows.Forms.ToolStripButton toolSBUp;
+        private System.Windows.Forms.ToolStripButton toolSBDown;
+        private System.Windows.Forms.TabPage todoList;
+        private System.Windows.Forms.DataGridView todoGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idTasks;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Finished;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskStart;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
+        private System.Windows.Forms.SplitContainer splitContainer;
+        private System.Windows.Forms.TreeView treeView_taskList;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Label labelTag;
+        private System.Windows.Forms.Label labelContext;
+        private System.Windows.Forms.Label labelDateEnd;
+        private System.Windows.Forms.DateTimePicker dateTimePickerStart;
+        private System.Windows.Forms.DateTimePicker dateTimePickerEnd;
+        private System.Windows.Forms.ComboBox comboBoxContext;
+        private System.Windows.Forms.ComboBox comboBoxTag;
+        private System.Windows.Forms.Label labelDateStart;
     }
 }
 

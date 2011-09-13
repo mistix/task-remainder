@@ -17,7 +17,6 @@ namespace TaskRemainder
         static string dataBase = "task-remainder.sql";
         #endregion
 
-		
         #region All methods connected with transaction 
         private static void OpenTransaction()
         {
@@ -919,5 +918,40 @@ namespace TaskRemainder
         }
         #endregion
 
+        #region Information about task
+        /// <summary>
+        /// Getting all nessesary information about tas
+        /// </summary>
+        /// <param name="idTasks">ID task</param>
+        /// <param name="date">Table contains informations about task</param>
+        /// <returns>SelectSuccessful or SelectError</returns>
+        static public DBRespons getTaskInformation(string idTasks, ref DataTable date)
+        {
+            try
+            {
+                date = new DataTable();
+
+                OpenTransaction();
+                // date information
+                command.CommandText = "select t.taskStart, t.taskEnd, tg.tagName, ct.contextName FROM Container c " +
+                    "LEFT OUTER JOIN Tag tg ON c.Tag_idTag=tg.idTag " +
+                    "LEFT OUTER JOIN Context ct ON ct.idContext=c.Context_idContext " +
+                    "LEFT OUTER JOIN Tasks t ON t.idTasks=c.Tasks_idTasks " +
+                    "WHERE c.Tasks_idTasks=:idTask";
+                command.Parameters.Add("idTask", DbType.VarNumeric).Value = idTasks;
+                command.Prepare();
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    date.Load(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DBRespons(DBStatus.SelectError, ex.Message);
+            }
+            return new DBRespons(DBStatus.SelectSuccessful);
+        }
+        #endregion
     }
 }

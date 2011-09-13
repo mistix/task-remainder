@@ -18,8 +18,11 @@ namespace TaskRemainder
         CreateTreeView createTreeView;
         DataGridViewCellStyle strikedOut;
         DataGridViewCellStyle regular;
-        GUI.ToolTipNode tip;
-        TreeNode oldNode; // represent old selected node
+        ContextMenu cont_menu;
+        MenuItem showInformation;
+        TreeNode oldSelNode;
+        int oldNodeIndex = -1;
+        int currentNodeIndex;
         #endregion
 
         public mainWindow()
@@ -34,6 +37,7 @@ namespace TaskRemainder
             // style for regular cell
             regular = new DataGridViewCellStyle(taskDesc.DefaultCellStyle);
             regular.Font = new Font(regular.Font, FontStyle.Regular);
+            cont_menu = new ContextMenu();
         }
 
         /// <summary>
@@ -43,6 +47,16 @@ namespace TaskRemainder
         /// <param name="e"></param>
         private void mainWindow_Load(object sender, EventArgs e)
         {
+            // on start hide panel2
+            splitContainer.Panel2Collapsed = true;
+            splitContainer.BorderStyle = BorderStyle.FixedSingle;
+
+            // menu for treeView
+            showInformation = new MenuItem();
+            showInformation.Text = "Show task information";
+            showInformation.Click += new EventHandler(showInformation_Click);
+            cont_menu.MenuItems.Add(showInformation);
+
             // Initialization DB 
             dbrespons = DBOperation.initDateBase();
             if (dbrespons.resultOperation() != DBStatus.InitDBSuccessful)
@@ -55,7 +69,6 @@ namespace TaskRemainder
             // creating new tree folder list
             updateTaskList();
             createTreeView.initTreeView();
-            tip = new GUI.ToolTipNode();
         }
 
 
@@ -367,16 +380,12 @@ namespace TaskRemainder
         /// <param name="e"></param>
         private void treeView_taskList_MouseMove(object sender, MouseEventArgs e)
         {
-            TreeNode node = treeView_taskList.GetNodeAt(e.X, e.Y);
+            TreeNode node = treeView_taskList.GetNodeAt(treeView_taskList.PointToClient(Cursor.Position));
             if (node != null)
             {
-                if (node.Name != "F")
+                currentNodeIndex = node.Index;
+                if ((node.Name != "F") && (currentNodeIndex != oldNodeIndex))
                 {
-                    if (oldNode != node)
-                    {
-                        tip.SetToolTip(treeView_taskList, node.Name);
-                        oldNode = node;
-                    }
                 }
             }
         }
@@ -446,6 +455,58 @@ namespace TaskRemainder
             }
             #endregion
 
+        }
+
+        private void treeView_taskList_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Point p = new Point(e.X, e.Y);
+                TreeNode node = treeView_taskList.GetNodeAt(p);
+                if (node != null)
+                {
+                    oldSelNode = treeView_taskList.SelectedNode;
+                    treeView_taskList.SelectedNode = node;
+                    cont_menu.Show(treeView_taskList, p);
+                    treeView_taskList.SelectedNode = oldSelNode;
+                    oldSelNode = null;
+                }
+            }
+        }
+
+        private void showInformation_Click(object sender, EventArgs e)
+        {
+            if (splitContainer.Panel2Collapsed)
+            {
+                splitContainer.Panel2Collapsed = false;
+                showInformation.Text = "Hide task information";
+
+                TreeNode node = treeView_taskList.SelectedNode;
+                if(node.Name != "F")
+                {
+                    string idTask = node.Tag.ToString();
+                    DataTable data = new DataTable(); // contains task information
+                    // FIXME wird things happen when some task have null date
+                    dbrespons = DBOperation.getTaskInformation(idTask, ref data);
+                    if (dbrespons.result != DBStatus.SelectSuccessful)
+                    {
+                        MessageBox.Show("Unable read task informaion", "Information",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // setingup date
+                    // TODO check if is any start and end date
+                    DateTime end = new DateTime();
+                    end = DateTime.ParseExact(data.Rows[0][0].ToString(), "yyyy-MM-dd HH:mm:ss", null);
+                    dateTimePickerEnd.Value = end;
+                }
+            }
+            else
+            {
+                showInformation.Text = "Show task information";
+                splitContainer.Panel2Collapsed = true;
+            }
         }
 
     }
