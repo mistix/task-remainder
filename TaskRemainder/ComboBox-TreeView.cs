@@ -9,9 +9,11 @@ namespace TaskRemainder
 {
     public class ComboBox_TreeView : ComboBox
     {
+		#region Variables
         ToolStripControlHost treeViewHost;
         TreeView treeView;
         ToolStripDropDown dropDown;
+		#endregion
 
         public ComboBox_TreeView()
         {

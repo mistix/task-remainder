@@ -23,6 +23,8 @@ namespace TaskRemainder
         TreeNode oldSelNode;
         int oldNodeIndex = -1;
         int currentNodeIndex;
+        TreeNode oldNode = null;
+        GUI.taskBoard taskBoard = new GUI.taskBoard();
         #endregion
 
         public mainWindow()
@@ -65,10 +67,20 @@ namespace TaskRemainder
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            
+
+            //seting up position of task board
+            int x = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            int y = 10;
+            x -= (10 + taskBoard.Width);
+
+            taskBoard.StartPosition = FormStartPosition.Manual;
+            taskBoard.Location = new Point(x, y);
+            taskBoard.Visible = true;
+
             // creating new tree folder list
             updateTaskList();
             createTreeView.initTreeView();
+            updateTaskBoard();
         }
 
 
@@ -94,6 +106,7 @@ namespace TaskRemainder
             addtask.Dispose();
             updateTaskList();
             createTreeView.updateTreeView();
+            updateTaskBoard();
         }
 
         /// <summary>
@@ -454,7 +467,6 @@ namespace TaskRemainder
                 treeView_taskList.EndUpdate();
             }
             #endregion
-
         }
 
         private void treeView_taskList_MouseUp(object sender, MouseEventArgs e)
@@ -486,8 +498,8 @@ namespace TaskRemainder
                 {
                     string idTask = node.Tag.ToString();
                     DataTable data = new DataTable(); // contains task information
-                    // FIXME wird things happen when some task have null date
-                    dbrespons = DBOperation.getTaskInformation(idTask, ref data);
+
+                    dbrespons = DBOperation.getTaskDate(idTask, ref data);
                     if (dbrespons.result != DBStatus.SelectSuccessful)
                     {
                         MessageBox.Show("Unable read task informaion", "Information",
@@ -496,10 +508,30 @@ namespace TaskRemainder
                     }
 
                     // setingup date
-                    // TODO check if is any start and end date
-                    DateTime end = new DateTime();
-                    end = DateTime.ParseExact(data.Rows[0][0].ToString(), "yyyy-MM-dd HH:mm:ss", null);
-                    dateTimePickerEnd.Value = end;
+                    if (!string.IsNullOrEmpty(data.Rows[0][0].ToString()))
+                    {
+                        dateTimePickerEnd.Enabled = true;
+                        DateTime end = new DateTime();
+                        end = DateTime.ParseExact(data.Rows[0][0].ToString(), "yyyy-MM-dd HH:mm:ss", null);
+                        dateTimePickerEnd.Value = end;
+                    }
+                    else
+                    {
+                        dateTimePickerEnd.Enabled = false;
+                    }
+
+                    // start date
+                    if (!string.IsNullOrEmpty(data.Rows[0][1].ToString()))
+                    {
+                        dateTimePickerStart.Enabled = true;
+                        DateTime start = new DateTime();
+                        start = DateTime.ParseExact(data.Rows[0][1].ToString(), "yyyy-MM-dd HH:mm:ss", null);
+                        dateTimePickerEnd.Value = start;
+                    }
+                    else
+                    {
+                        dateTimePickerStart.Enabled = false;
+                    }
                 }
             }
             else
@@ -509,5 +541,100 @@ namespace TaskRemainder
             }
         }
 
+        // checking up if node is changed
+        private void treeView_taskList_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (oldNode == null)
+            {
+                oldNode = treeView_taskList.SelectedNode;
+            }
+
+            // update informations about task
+            if (oldNode != treeView_taskList.SelectedNode)
+            {
+                if (splitContainer.Panel2Collapsed == false) // when panel is visible
+                {
+                    TreeNode node = e.Node; 
+                    if (node.Name != "F")
+                    {
+                        string idTask = node.Tag.ToString();
+                        DataTable data = new DataTable(); // contains task information
+
+                        dbrespons = DBOperation.getTaskDate(idTask, ref data);
+                        if (dbrespons.result != DBStatus.SelectSuccessful)
+                        {
+                            MessageBox.Show("Unable read task informaion", "Information",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        // setingup date
+                        if (!string.IsNullOrEmpty(data.Rows[1][0].ToString()))
+                        {
+                            dateTimePickerEnd.Enabled = true;
+                            DateTime end = new DateTime();
+                            end = DateTime.ParseExact(data.Rows[1][0].ToString(), "yyyy-MM-dd HH:mm:ss", null);
+                            dateTimePickerEnd.Value = end;
+                        }
+                        else
+                        {
+                            dateTimePickerEnd.Enabled = false;
+                        }
+
+                        // start date
+                        if (!string.IsNullOrEmpty(data.Rows[1][1].ToString()))
+                        {
+                            dateTimePickerStart.Enabled = true;
+                            DateTime start = new DateTime();
+                            start = DateTime.ParseExact(data.Rows[1][1].ToString(), "yyyy-MM-dd HH:mm:ss", null);
+                            dateTimePickerEnd.Value = start;
+                        }
+                        else
+                        {
+                            dateTimePickerStart.Enabled = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        #region Timer action
+        // checking every 5 min if any task is going to end or start
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            updateTaskBoard();
+        }
+
+        /// <summary>
+        /// Updating task board
+        /// </summary>
+        private void updateTaskBoard()
+        {
+            DataTable tasks = (DataTable)todoGridView.DataSource;
+            DataRow[] rows = tasks.Select("","taskEnd DESC"); // order by taskEnd DESC
+
+            taskBoard.clearBoard(); // clear board
+
+            foreach (DataRow row in rows) // adding new tasks to board
+            {
+                taskBoard.addTask(row[1].ToString(), row[2].ToString());
+            }
+        }
+        #endregion
+
+        // seting up visibility of task board
+        private void showTaskBoardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (showTaskBoardToolStripMenuItem.Checked)
+            {
+                showTaskBoardToolStripMenuItem.Checked = false;
+                taskBoard.Visible = false;
+            }
+            else
+            {
+                showTaskBoardToolStripMenuItem.Checked = true;
+                taskBoard.Visible = true;
+            }
+        }
     }
 }

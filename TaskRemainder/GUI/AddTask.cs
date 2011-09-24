@@ -195,12 +195,14 @@ namespace TaskRemainder.GUI
         }
         #endregion
 
+        #region Checking if user want add task to root
         private void checkBoxFolder_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxFolder.Checked)
             {
                 this.labelFolder.Enabled = false;
                 this.comboBoxFolder.Enabled = false;
+                comboBoxFolder.Text = "--- Task folder ---";
             }
             else
             {
@@ -208,5 +210,6 @@ namespace TaskRemainder.GUI
                 this.comboBoxFolder.Enabled = true;
             }
         }
+        #endregion
     }
 }

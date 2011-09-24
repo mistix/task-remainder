@@ -49,6 +49,7 @@
             this.showFinishedTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.todoListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showFinishedTasksToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTaskBoardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBar = new System.Windows.Forms.StatusStrip();
@@ -66,6 +67,14 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.treeView_taskList = new System.Windows.Forms.TreeView();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelTag = new System.Windows.Forms.Label();
+            this.labelContext = new System.Windows.Forms.Label();
+            this.labelDateEnd = new System.Windows.Forms.Label();
+            this.dateTimePickerStart = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
+            this.comboBoxContext = new System.Windows.Forms.ComboBox();
+            this.comboBoxTag = new System.Windows.Forms.ComboBox();
+            this.labelDateStart = new System.Windows.Forms.Label();
             this.todoList = new System.Windows.Forms.TabPage();
             this.todoGridView = new System.Windows.Forms.DataGridView();
             this.idTasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -73,14 +82,7 @@
             this.taskDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskStart = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dateTimePickerStart = new System.Windows.Forms.DateTimePicker();
-            this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
-            this.comboBoxContext = new System.Windows.Forms.ComboBox();
-            this.comboBoxTag = new System.Windows.Forms.ComboBox();
-            this.labelDateStart = new System.Windows.Forms.Label();
-            this.labelDateEnd = new System.Windows.Forms.Label();
-            this.labelContext = new System.Windows.Forms.Label();
-            this.labelTag = new System.Windows.Forms.Label();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -207,7 +209,8 @@
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.taskListToolStripMenuItem,
-            this.todoListToolStripMenuItem});
+            this.todoListToolStripMenuItem,
+            this.showTaskBoardToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 17);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -218,7 +221,7 @@
             this.toolStripSeparator2,
             this.showFinishedTasksToolStripMenuItem});
             this.taskListToolStripMenuItem.Name = "taskListToolStripMenuItem";
-            this.taskListToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.taskListToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.taskListToolStripMenuItem.Text = "Task list";
             // 
             // toolStripSeparator2
@@ -238,7 +241,7 @@
             this.todoListToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showFinishedTasksToolStripMenuItem1});
             this.todoListToolStripMenuItem.Name = "todoListToolStripMenuItem";
-            this.todoListToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.todoListToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.todoListToolStripMenuItem.Text = "To-do list";
             // 
             // showFinishedTasksToolStripMenuItem1
@@ -246,6 +249,15 @@
             this.showFinishedTasksToolStripMenuItem1.Name = "showFinishedTasksToolStripMenuItem1";
             this.showFinishedTasksToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.showFinishedTasksToolStripMenuItem1.Text = "Show finished tasks";
+            // 
+            // showTaskBoardToolStripMenuItem
+            // 
+            this.showTaskBoardToolStripMenuItem.Checked = true;
+            this.showTaskBoardToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showTaskBoardToolStripMenuItem.Name = "showTaskBoardToolStripMenuItem";
+            this.showTaskBoardToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.showTaskBoardToolStripMenuItem.Text = "Task board";
+            this.showTaskBoardToolStripMenuItem.Click += new System.EventHandler(this.showTaskBoardToolStripMenuItem_Click);
             // 
             // aboutBoxToolStripMenuItem
             // 
@@ -422,6 +434,7 @@
             this.treeView_taskList.TabIndex = 1;
             this.treeView_taskList.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_BeforeLabelEdit);
             this.treeView_taskList.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView_taskList_AfterLabelEdit);
+            this.treeView_taskList.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_taskList_NodeMouseClick);
             this.treeView_taskList.DoubleClick += new System.EventHandler(this.treeView_taskList_DoubleClick);
             this.treeView_taskList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeView_taskList_MouseMove);
             this.treeView_taskList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView_taskList_MouseUp);
@@ -453,6 +466,76 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(157, 308);
             this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // labelTag
+            // 
+            this.labelTag.AutoSize = true;
+            this.labelTag.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelTag.Location = new System.Drawing.Point(3, 114);
+            this.labelTag.Name = "labelTag";
+            this.labelTag.Size = new System.Drawing.Size(36, 16);
+            this.labelTag.TabIndex = 7;
+            this.labelTag.Text = "Tag";
+            // 
+            // labelContext
+            // 
+            this.labelContext.AutoSize = true;
+            this.labelContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelContext.Location = new System.Drawing.Point(3, 76);
+            this.labelContext.Name = "labelContext";
+            this.labelContext.Size = new System.Drawing.Size(59, 16);
+            this.labelContext.TabIndex = 6;
+            this.labelContext.Text = "Context";
+            // 
+            // labelDateEnd
+            // 
+            this.labelDateEnd.AutoSize = true;
+            this.labelDateEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelDateEnd.Location = new System.Drawing.Point(3, 38);
+            this.labelDateEnd.Name = "labelDateEnd";
+            this.labelDateEnd.Size = new System.Drawing.Size(47, 32);
+            this.labelDateEnd.TabIndex = 5;
+            this.labelDateEnd.Text = "Task end";
+            // 
+            // dateTimePickerStart
+            // 
+            this.dateTimePickerStart.Location = new System.Drawing.Point(70, 3);
+            this.dateTimePickerStart.Name = "dateTimePickerStart";
+            this.dateTimePickerStart.Size = new System.Drawing.Size(83, 20);
+            this.dateTimePickerStart.TabIndex = 0;
+            // 
+            // dateTimePickerEnd
+            // 
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(70, 41);
+            this.dateTimePickerEnd.Name = "dateTimePickerEnd";
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(83, 20);
+            this.dateTimePickerEnd.TabIndex = 1;
+            // 
+            // comboBoxContext
+            // 
+            this.comboBoxContext.FormattingEnabled = true;
+            this.comboBoxContext.Location = new System.Drawing.Point(70, 79);
+            this.comboBoxContext.Name = "comboBoxContext";
+            this.comboBoxContext.Size = new System.Drawing.Size(83, 21);
+            this.comboBoxContext.TabIndex = 2;
+            // 
+            // comboBoxTag
+            // 
+            this.comboBoxTag.FormattingEnabled = true;
+            this.comboBoxTag.Location = new System.Drawing.Point(70, 117);
+            this.comboBoxTag.Name = "comboBoxTag";
+            this.comboBoxTag.Size = new System.Drawing.Size(83, 21);
+            this.comboBoxTag.TabIndex = 3;
+            // 
+            // labelDateStart
+            // 
+            this.labelDateStart.AutoSize = true;
+            this.labelDateStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelDateStart.Location = new System.Drawing.Point(3, 0);
+            this.labelDateStart.Name = "labelDateStart";
+            this.labelDateStart.Size = new System.Drawing.Size(47, 32);
+            this.labelDateStart.TabIndex = 4;
+            this.labelDateStart.Text = "Task start";
             // 
             // todoList
             // 
@@ -530,75 +613,11 @@
             this.taskEnd.Name = "taskEnd";
             this.taskEnd.ReadOnly = true;
             // 
-            // dateTimePickerStart
+            // timer
             // 
-            this.dateTimePickerStart.Location = new System.Drawing.Point(71, 3);
-            this.dateTimePickerStart.Name = "dateTimePickerStart";
-            this.dateTimePickerStart.Size = new System.Drawing.Size(83, 20);
-            this.dateTimePickerStart.TabIndex = 0;
-            // 
-            // dateTimePickerEnd
-            // 
-            this.dateTimePickerEnd.Location = new System.Drawing.Point(71, 41);
-            this.dateTimePickerEnd.Name = "dateTimePickerEnd";
-            this.dateTimePickerEnd.Size = new System.Drawing.Size(83, 20);
-            this.dateTimePickerEnd.TabIndex = 1;
-            // 
-            // comboBoxContext
-            // 
-            this.comboBoxContext.FormattingEnabled = true;
-            this.comboBoxContext.Location = new System.Drawing.Point(71, 79);
-            this.comboBoxContext.Name = "comboBoxContext";
-            this.comboBoxContext.Size = new System.Drawing.Size(83, 21);
-            this.comboBoxContext.TabIndex = 2;
-            // 
-            // comboBoxTag
-            // 
-            this.comboBoxTag.FormattingEnabled = true;
-            this.comboBoxTag.Location = new System.Drawing.Point(71, 117);
-            this.comboBoxTag.Name = "comboBoxTag";
-            this.comboBoxTag.Size = new System.Drawing.Size(83, 21);
-            this.comboBoxTag.TabIndex = 3;
-            // 
-            // labelDateStart
-            // 
-            this.labelDateStart.AutoSize = true;
-            this.labelDateStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelDateStart.Location = new System.Drawing.Point(3, 0);
-            this.labelDateStart.Name = "labelDateStart";
-            this.labelDateStart.Size = new System.Drawing.Size(47, 32);
-            this.labelDateStart.TabIndex = 4;
-            this.labelDateStart.Text = "Task start";
-            // 
-            // labelDateEnd
-            // 
-            this.labelDateEnd.AutoSize = true;
-            this.labelDateEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelDateEnd.Location = new System.Drawing.Point(3, 38);
-            this.labelDateEnd.Name = "labelDateEnd";
-            this.labelDateEnd.Size = new System.Drawing.Size(47, 32);
-            this.labelDateEnd.TabIndex = 5;
-            this.labelDateEnd.Text = "Task end";
-            // 
-            // labelContext
-            // 
-            this.labelContext.AutoSize = true;
-            this.labelContext.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelContext.Location = new System.Drawing.Point(3, 76);
-            this.labelContext.Name = "labelContext";
-            this.labelContext.Size = new System.Drawing.Size(59, 16);
-            this.labelContext.TabIndex = 6;
-            this.labelContext.Text = "Context";
-            // 
-            // labelTag
-            // 
-            this.labelTag.AutoSize = true;
-            this.labelTag.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelTag.Location = new System.Drawing.Point(3, 114);
-            this.labelTag.Name = "labelTag";
-            this.labelTag.Size = new System.Drawing.Size(36, 16);
-            this.labelTag.TabIndex = 7;
-            this.labelTag.Text = "Tag";
+            this.timer.Enabled = true;
+            this.timer.Interval = 5000;
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
             // mainWindow
             // 
@@ -691,6 +710,8 @@
         private System.Windows.Forms.ComboBox comboBoxContext;
         private System.Windows.Forms.ComboBox comboBoxTag;
         private System.Windows.Forms.Label labelDateStart;
+        private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.ToolStripMenuItem showTaskBoardToolStripMenuItem;
     }
 }
 

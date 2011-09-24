@@ -50,6 +50,7 @@ namespace TaskRemainder
             }
         }
 		
+        
         private static void CommitTransaction()
         {
             if (transaction != null)
@@ -72,53 +73,46 @@ namespace TaskRemainder
             {
                 if (System.IO.File.Exists(dataBase) == false)
                 {
-                    // opening database
-                    connection = new SQLiteConnection("Data Source=" + dataBase);
-                    connection.Open();
 
-                    using (transaction = connection.BeginTransaction())
-                    {
-                        using (command = connection.CreateCommand())
-                        {
-                            // Creating Context table
-                            command.CommandText = "CREATE TABLE IF NOT EXISTS [Context] (" +
-                                "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                "[contextName] VARCHAR(255)  UNIQUE NOT NULL)";
-                            command.ExecuteNonQuery();
+                    // opening new transaction and connection
+                    OpenTransaction();
 
-                            //creating Tag table
-                            command.CommandText = "CREATE TABLE [Tag] (" +
-                                "[idTag] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                "[tagName] VARCHAR(255)  NOT NULL)";
-                            command.ExecuteNonQuery();
+                    // Creating Context table
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS [Context] (" +
+                        "[idContext] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "[contextName] VARCHAR(255)  UNIQUE NOT NULL)";
+                    command.ExecuteNonQuery();
 
-                            //Creating Folders table
-                            command.CommandText = "CREATE TABLE [Folder] (" +
-                                "[idFolder] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                "[folderName] VARCHAR(255) NOT NULL, " +
-                                "[idParentFolder] INTEGER  NULL)";
-                            command.ExecuteNonQuery();
+                    //creating Tag table
+                    command.CommandText = "CREATE TABLE [Tag] (" +
+                        "[idTag] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "[tagName] VARCHAR(255)  NOT NULL)";
+                    command.ExecuteNonQuery();
 
-                            //Creating Tasks table
-                            command.CommandText = "CREATE TABLE [Tasks] (" +
-                                "[idTasks] INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                                "[taskDesc] NVARCHAR(500)  NOT NULL, " +
-                                "[taskEnd] DATE  NULL, " +
-                                "[taskStart] DATE  NULL, " +
-                                "[finished] BOOLEAN  NOT NULL)";
-                            command.ExecuteNonQuery();
+                    //Creating Folders table
+                    command.CommandText = "CREATE TABLE [Folder] (" +
+                        "[idFolder] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "[folderName] VARCHAR(255) NOT NULL, " +
+                        "[idParentFolder] INTEGER  NULL)";
+                    command.ExecuteNonQuery();
 
-                            // Creating Container tabke
-                            command.CommandText = "CREATE TABLE [Container] (" +
-                                "[idContainer] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                                "[Tasks_idTasks] INTEGER NULL, " +
-                                "[Folder_idFolder] INTEGER NULL, " +
-                                "[Tag_idTag] INTEGER NULL, " +
-                                "[Context_idContext] INTEGER NULL)";
-                            command.ExecuteNonQuery();
-                            transaction.Commit();
-                        }
-                    }
+                    //Creating Tasks table
+                    command.CommandText = "CREATE TABLE [Tasks] (" +
+                        "[idTasks] INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "[taskDesc] NVARCHAR(500)  NOT NULL, " +
+                        "[taskEnd] DATE  NULL, " +
+                        "[taskStart] DATE  NULL, " +
+                        "[finished] BOOLEAN  NOT NULL)";
+                    command.ExecuteNonQuery();
+
+                    // Creating Container tabke
+                    command.CommandText = "CREATE TABLE [Container] (" +
+                        "[idContainer] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                        "[Tasks_idTasks] INTEGER NULL, " +
+                        "[Folder_idFolder] INTEGER NULL, " +
+                        "[Tag_idTag] INTEGER NULL, " +
+                        "[Context_idContext] INTEGER NULL)";
+                    command.ExecuteNonQuery();
                 }
                 else
                 {
@@ -131,7 +125,7 @@ namespace TaskRemainder
                 RollbackTransaction();
                 return new DBRespons(DBStatus.InitDBError, e.Message);
             }
-            //CommitTransaction();
+            CommitTransaction();
             return new DBRespons(DBStatus.InitDBSuccessful);
         }
         #endregion
@@ -533,7 +527,6 @@ namespace TaskRemainder
 
                 OpenTransaction();
                 command.CommandText = "select * from Tasks order by taskEnd";
-                command.Prepare();
 
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
@@ -915,6 +908,36 @@ namespace TaskRemainder
             }
             CommitTransaction();
             return new DBRespons(DBStatus.DeleteSuccessful);
+        }
+        #endregion
+
+        #region Task date (start task and end task)
+        /// <summary>
+        /// Getting start and end task date
+        /// </summary>
+        /// <param name="idTasks">ID task</param>
+        /// <param name="date">Table contains date end and start</param>
+        /// <returns>SelectSuccessfull and SelectError</returns>
+        static public DBRespons getTaskDate(string idTasks, ref DataTable date)
+        {
+            try
+            {
+                date = new DataTable();
+
+                OpenTransaction();
+                command.CommandText = "select taskEnd, taskStart FROM Tasks";
+                command.Prepare();
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    date.Load(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DBRespons(DBStatus.SelectError, ex.Message);
+            }
+            return new DBRespons(DBStatus.SelectSuccessful);
         }
         #endregion
 

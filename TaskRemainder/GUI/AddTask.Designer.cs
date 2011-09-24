@@ -98,7 +98,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.33788F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.66212F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
             this.tableLayoutPanel1.Controls.Add(this.checkBoxFolder, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelFolder, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxEnd, 2, 1);
@@ -122,7 +122,7 @@
             // 
             this.checkBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxFolder.AutoSize = true;
-            this.checkBoxFolder.Location = new System.Drawing.Point(364, 49);
+            this.checkBoxFolder.Location = new System.Drawing.Point(362, 49);
             this.checkBoxFolder.Name = "checkBoxFolder";
             this.checkBoxFolder.Size = new System.Drawing.Size(15, 19);
             this.checkBoxFolder.TabIndex = 8;
@@ -134,7 +134,7 @@
             this.labelFolder.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelFolder.AutoSize = true;
             this.labelFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelFolder.Location = new System.Drawing.Point(28, 49);
+            this.labelFolder.Location = new System.Drawing.Point(27, 49);
             this.labelFolder.Name = "labelFolder";
             this.labelFolder.Size = new System.Drawing.Size(66, 18);
             this.labelFolder.TabIndex = 6;
@@ -144,7 +144,7 @@
             // 
             this.checkBoxEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxEnd.AutoSize = true;
-            this.checkBoxEnd.Location = new System.Drawing.Point(364, 26);
+            this.checkBoxEnd.Location = new System.Drawing.Point(362, 26);
             this.checkBoxEnd.Name = "checkBoxEnd";
             this.checkBoxEnd.Size = new System.Drawing.Size(15, 17);
             this.checkBoxEnd.TabIndex = 5;
@@ -156,7 +156,7 @@
             this.labelStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelStart.AutoSize = true;
             this.labelStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelStart.Location = new System.Drawing.Point(5, 2);
+            this.labelStart.Location = new System.Drawing.Point(4, 2);
             this.labelStart.Name = "labelStart";
             this.labelStart.Size = new System.Drawing.Size(89, 18);
             this.labelStart.TabIndex = 0;
@@ -167,7 +167,7 @@
             this.labelEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelEnd.AutoSize = true;
             this.labelEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.labelEnd.Location = new System.Drawing.Point(7, 25);
+            this.labelEnd.Location = new System.Drawing.Point(6, 25);
             this.labelEnd.Name = "labelEnd";
             this.labelEnd.Size = new System.Drawing.Size(87, 18);
             this.labelEnd.TabIndex = 1;
@@ -176,25 +176,25 @@
             // dateTimePickerStart
             // 
             this.dateTimePickerStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerStart.Location = new System.Drawing.Point(100, 3);
+            this.dateTimePickerStart.Location = new System.Drawing.Point(99, 3);
             this.dateTimePickerStart.Name = "dateTimePickerStart";
-            this.dateTimePickerStart.Size = new System.Drawing.Size(241, 21);
+            this.dateTimePickerStart.Size = new System.Drawing.Size(238, 21);
             this.dateTimePickerStart.TabIndex = 2;
             this.dateTimePickerStart.Value = new System.DateTime(2011, 8, 15, 19, 16, 52, 0);
             // 
             // dateTimePickerEnd
             // 
             this.dateTimePickerEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePickerEnd.Location = new System.Drawing.Point(100, 26);
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(99, 26);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
-            this.dateTimePickerEnd.Size = new System.Drawing.Size(241, 21);
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(238, 21);
             this.dateTimePickerEnd.TabIndex = 3;
             // 
             // checkBoxStartDate
             // 
             this.checkBoxStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.checkBoxStartDate.AutoSize = true;
-            this.checkBoxStartDate.Location = new System.Drawing.Point(364, 3);
+            this.checkBoxStartDate.Location = new System.Drawing.Point(362, 3);
             this.checkBoxStartDate.Name = "checkBoxStartDate";
             this.checkBoxStartDate.Size = new System.Drawing.Size(15, 17);
             this.checkBoxStartDate.TabIndex = 4;
@@ -205,9 +205,9 @@
             // 
             this.comboBoxFolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxFolder.FormattingEnabled = true;
-            this.comboBoxFolder.Location = new System.Drawing.Point(100, 49);
+            this.comboBoxFolder.Location = new System.Drawing.Point(99, 49);
             this.comboBoxFolder.Name = "comboBoxFolder";
-            this.comboBoxFolder.Size = new System.Drawing.Size(241, 23);
+            this.comboBoxFolder.Size = new System.Drawing.Size(238, 23);
             this.comboBoxFolder.TabIndex = 7;
             this.comboBoxFolder.Text = "--- Task folder ---";
             // 

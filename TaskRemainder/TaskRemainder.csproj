@@ -66,6 +66,12 @@
     <Compile Include="GUI\AddTask.Designer.cs">
       <DependentUpon>AddTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\taskBoard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\taskBoard.Designer.cs">
+      <DependentUpon>taskBoard.cs</DependentUpon>
+    </Compile>
     <Compile Include="mainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +83,9 @@
     <Compile Include="Tools.cs" />
     <EmbeddedResource Include="GUI\AddTask.resx">
       <DependentUpon>AddTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\taskBoard.resx">
+      <DependentUpon>taskBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="mainWindow.resx">
       <DependentUpon>mainWindow.cs</DependentUpon>
