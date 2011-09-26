@@ -98,7 +98,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.33788F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.66212F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.Controls.Add(this.checkBoxFolder, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelFolder, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxEnd, 2, 1);
@@ -178,7 +178,7 @@
             this.dateTimePickerStart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dateTimePickerStart.Location = new System.Drawing.Point(99, 3);
             this.dateTimePickerStart.Name = "dateTimePickerStart";
-            this.dateTimePickerStart.Size = new System.Drawing.Size(238, 21);
+            this.dateTimePickerStart.Size = new System.Drawing.Size(237, 21);
             this.dateTimePickerStart.TabIndex = 2;
             this.dateTimePickerStart.Value = new System.DateTime(2011, 8, 15, 19, 16, 52, 0);
             // 
@@ -187,7 +187,7 @@
             this.dateTimePickerEnd.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dateTimePickerEnd.Location = new System.Drawing.Point(99, 26);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
-            this.dateTimePickerEnd.Size = new System.Drawing.Size(238, 21);
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(237, 21);
             this.dateTimePickerEnd.TabIndex = 3;
             // 
             // checkBoxStartDate
@@ -207,7 +207,7 @@
             this.comboBoxFolder.FormattingEnabled = true;
             this.comboBoxFolder.Location = new System.Drawing.Point(99, 49);
             this.comboBoxFolder.Name = "comboBoxFolder";
-            this.comboBoxFolder.Size = new System.Drawing.Size(238, 23);
+            this.comboBoxFolder.Size = new System.Drawing.Size(237, 23);
             this.comboBoxFolder.TabIndex = 7;
             this.comboBoxFolder.Text = "--- Task folder ---";
             // 

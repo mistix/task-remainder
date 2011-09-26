@@ -323,6 +323,8 @@ namespace TaskRemainder
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+                updateTaskList();
+                updateTaskBoard();
             }
         }
         #endregion
@@ -611,8 +613,7 @@ namespace TaskRemainder
         private void updateTaskBoard()
         {
             DataTable tasks = (DataTable)todoGridView.DataSource;
-            DataRow[] rows = tasks.Select("","taskEnd DESC"); // order by taskEnd DESC
-
+            DataRow[] rows = tasks.Select("","taskEnd ASC"); // order by taskEnd DESC
             taskBoard.clearBoard(); // clear board
 
             foreach (DataRow row in rows) // adding new tasks to board

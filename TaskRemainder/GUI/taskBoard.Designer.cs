@@ -50,6 +50,7 @@
             // splitContainer.Panel1
             // 
             this.splitContainer.Panel1.Controls.Add(this.richTextBox);
+            this.splitContainer.Panel1MinSize = 113;
             // 
             // splitContainer.Panel2
             // 
@@ -57,7 +58,7 @@
             this.splitContainer.Panel2Collapsed = true;
             this.splitContainer.Panel2MinSize = 20;
             this.splitContainer.Size = new System.Drawing.Size(199, 138);
-            this.splitContainer.SplitterDistance = 25;
+            this.splitContainer.SplitterDistance = 113;
             this.splitContainer.SplitterWidth = 1;
             this.splitContainer.TabIndex = 0;
             // 
@@ -66,6 +67,7 @@
             this.richTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBox.Name = "richTextBox";
@@ -80,9 +82,9 @@
             // statusStrip1
             // 
             this.statusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.statusStrip1.Location = new System.Drawing.Point(0, 24);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 2);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(150, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(199, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.MouseEnter += new System.EventHandler(this.statusStrip1_MouseEnter);
