@@ -618,7 +618,9 @@ namespace TaskRemainder
 
             foreach (DataRow row in rows) // adding new tasks to board
             {
-                taskBoard.addTask(row[1].ToString(), row[2].ToString());
+                bool finished = bool.Parse(row[4].ToString());
+                if(!finished)
+                    taskBoard.addTask(row[1].ToString(), row[2].ToString());
             }
         }
         #endregion
@@ -636,6 +638,16 @@ namespace TaskRemainder
                 showTaskBoardToolStripMenuItem.Checked = true;
                 taskBoard.Visible = true;
             }
+        }
+
+        /// <summary>
+        /// When cell is end editing then update task board contain
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void todoGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            updateTaskBoard();
         }
     }
 }

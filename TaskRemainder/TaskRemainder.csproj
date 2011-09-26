@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalendarColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ComboBox-TreeView.cs">
       <SubType>Component</SubType>
     </Compile>

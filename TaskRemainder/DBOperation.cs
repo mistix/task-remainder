@@ -780,11 +780,12 @@ namespace TaskRemainder
             try
             {
                 OpenTransaction();
-                command.CommandText = "update Tasks set taskDesc = :taskDesc, taskEnd = :taskEnd, taskStar = :taskBegin, " +
-                    " finished = :finished where idTasks = :idTasks";
+                command.CommandText = "update Tasks set taskDesc=:taskDesc, taskEnd=:taskEnd, taskStart=:taskBegin, " +
+                    " finished=:finished where idTasks=:idTasks";
+                command.Parameters.Clear();
                 command.Parameters.Add("taskDesc", DbType.String).Value = taskDesc;
-                command.Parameters.Add("taskEnd", DbType.String).Value = taskEnd;
-                command.Parameters.Add("taskStart", DbType.String).Value = taskBegin;
+                command.Parameters.Add("taskEnd", DbType.Date).Value = taskEnd;
+                command.Parameters.Add("taskBegin", DbType.Date).Value = taskBegin;
                 command.Parameters.Add("finished", DbType.Boolean).Value = finished;
                 command.Parameters.Add("idTasks", DbType.VarNumeric).Value = idTasks;
                 command.Prepare();

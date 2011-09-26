@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainWindow));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -80,9 +81,12 @@
             this.idTasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Finished = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.taskDesc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taskStart = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taskEnd = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taskStart = new TaskRemainder.CalendarColumn();
+            this.taskEnd = new TaskRemainder.CalendarColumn();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.calendarColumn1 = new TaskRemainder.CalendarColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -571,6 +575,7 @@
             this.todoGridView.Size = new System.Drawing.Size(661, 348);
             this.todoGridView.TabIndex = 0;
             this.todoGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.todoGridView_CellContentClick);
+            this.todoGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.todoGridView_CellEndEdit);
             // 
             // idTasks
             // 
@@ -605,19 +610,45 @@
             this.taskStart.DataPropertyName = "taskStart";
             this.taskStart.HeaderText = "Task started";
             this.taskStart.Name = "taskStart";
+            this.taskStart.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.taskStart.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // taskEnd
             // 
             this.taskEnd.DataPropertyName = "taskEnd";
             this.taskEnd.HeaderText = "Task finish";
             this.taskEnd.Name = "taskEnd";
-            this.taskEnd.ReadOnly = true;
             // 
             // timer
             // 
             this.timer.Enabled = true;
             this.timer.Interval = 300000;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "idTasks";
+            this.dataGridViewTextBoxColumn1.HeaderText = "idTasks";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "taskDesc";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn2.HeaderText = "Task description";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // calendarColumn1
+            // 
+            this.calendarColumn1.DataPropertyName = "taskEnd";
+            this.calendarColumn1.HeaderText = "Task finish";
+            this.calendarColumn1.Name = "calendarColumn1";
+            this.calendarColumn1.ReadOnly = true;
             // 
             // mainWindow
             // 
@@ -694,11 +725,6 @@
         private System.Windows.Forms.ToolStripButton toolSBDown;
         private System.Windows.Forms.TabPage todoList;
         private System.Windows.Forms.DataGridView todoGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn idTasks;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Finished;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskStart;
-        private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.TreeView treeView_taskList;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
@@ -712,6 +738,15 @@
         private System.Windows.Forms.Label labelDateStart;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripMenuItem showTaskBoardToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private CalendarColumn calendarColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idTasks;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Finished;
+        private System.Windows.Forms.DataGridViewTextBoxColumn taskDesc;
+        private CalendarColumn taskStart;
+        private CalendarColumn taskEnd;
+        //private System.Windows.Forms.DataGridViewTextBoxColumn taskEnd;
     }
 }
 
